@@ -1,0 +1,34 @@
+{
+  "project": {
+    "version": "1.0",
+    "name": "SmartAppPOC"
+  },
+  "apps": [
+    {
+      "root":"src",
+      "outDir": "dist",
+      "index": "index.html",
+      "main": "app/main.ts",
+      "assets": [],
+      "tsconfig": "tsconfig.json",
+      "prefix": "app",
+      "mobile": false,
+      "styles": [
+        "content/css/style.css",
+        "content/css/riliwan-rabo.css",
+        "content/css/loading-bars.css"
+      ],
+      "scripts": [],
+      "environmentSource": "environments/environments.ts",
+"environments": {
+  "dev": "environments/environments.ts"
+}
+    }
+  ],
+  "addons": [],
+  "packages": [],
+  "defaults": {
+    "styleExt": "css",
+    "prefixInterfaces": false
+  }
+}

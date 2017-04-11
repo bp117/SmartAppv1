@@ -1,0 +1,10 @@
+---
+applications:
+- name: SmartApp
+  memory: 256M
+  instances: 1
+  PATH: /usr/local/bin:/usr/bin:/bin
+  domain: cfapps.io
+  command: npm cache clean && npm install typescript -g && npm install && npm start
+  timeout: 180
+  

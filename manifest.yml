@@ -1,0 +1,9 @@
+---
+applications:
+- name: SmartAppv1
+  memory: 1256M
+  instances: 1
+  PATH: .
+  command: npm startapp
+  timeout: 180
+  

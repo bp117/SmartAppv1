@@ -1,0 +1,67 @@
+
+<div class="tab-pane fade in active">
+    <h4 class="head text-center">{{title}}</h4>
+    <br/>
+    <div class='row'>
+        <div class='col-xs-offset-1 col-xs-10 col-sm-offset-2 col-sm-8'>
+            <div class="row">
+                <div class='col-xs-12 col-sm-6'>
+                    <div class="form-group">
+                        <label class="control-label" for="firstname">First Name</label>  
+                        <input class="form-control input-md" id="firstname" name="firstname" type="text" placeholder="First Name" [(ngModel)]="formData.firstName">   
+                    </div>
+                </div>
+                <div class='col-xs-12 col-sm-6'>
+                    <div class="form-group">
+                        <label class="control-label" for="lastname">Last Name</label>  
+                        <input class="form-control input-md" id="lastname" name="lastname" type="text" placeholder="Last Name" [(ngModel)]="formData.lastName">
+                    </div>
+                </div>
+            </div>
+
+             <div class="row">
+                <div class='col-xs-12 col-sm-6'>
+                    <div class="form-group">
+                        <label class="control-label" for="phone">Phone</label>  
+                        <input class="form-control input-md" id="phone" name="phone" type="number" placeholder="Phone" [(ngModel)]="formData.phone">   
+                    </div>
+                </div>
+                <div class='col-xs-12 col-sm-6'>
+                    <div class="form-group">
+                        <label class="control-label" for="phonetype">Phone Type</label>  
+                       <select name="phonetype" class="form-control" [(ngModel)]="formData.phoneType" style="width:100px">
+                        <option *ngFor="let ptype of phonetypes" [attr.selected]="ptype.display == 'Select' ? true : null">{{ptype.display}}</option>
+                       </select>
+                    </div>
+                </div>
+            </div>
+             <div class="row">
+                <div class='col-xs-12 col-sm-6'>
+                    <div class="form-group">
+                        <label class="control-label" for="idNumber">ID Number</label>  
+                        <input class="form-control input-md" id="idNumber" name="idNumber" type="number" placeholder="" [(ngModel)]="formData.idNumber">   
+                    </div>
+                </div>
+                <div class='col-xs-12 col-sm-6'>
+                    <div class="form-group">
+                        <label class="control-label" for="idType">ID Type</label>  
+                       <select name="idType" class="form-control" [(ngModel)]="formData.idType" style="width:100px">
+                        
+   
+                        <option *ngFor="let idtype of idTypes" [attr.selected]="idtype.display == 'Select' ? true : null">{{idtype.display}}</option>
+                       </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="control-label" for="email">Email</label>
+                <input class="form-control input-md" id="email" name="email" type="text" placeholder="Email" [(ngModel)]="formData.email">
+                       </div>
+
+            <div class="form-group text-center">
+                <a uiSref="work" class="btn btn-success btn-outline-rounded btn-info"> Next <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span></a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,22 @@
+<div class="tab-pane fade in active">
+    <div class="form-horizontal">
+        <h4 class="head text-center">{{title}}</h4>
+        <br/>
+        <div class='row'>
+            <div class='col-xs-offset-4 col-xs-10 col-sm-offset-5 col-sm-4'>
+                <div class="form-group">
+                      <label class="control-label" for="empStatus">Employment Status</label>  
+                  <select name="empStatus" class="form-control" [(ngModel)]="formData.empStatus" style="width:180px">
+                        <option *ngFor="let status of empStatuses" [attr.selected]="status.display == 'Select' ? true : null">{{status.display}}</option>
+                       </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group text-center space-20">
+            <a uiSref="personal" class="btn btn-outline-rounded btn-default"> <span style="margin-right:10px;" class="glyphicon glyphicon-arrow-left"></span> Previous</a>
+            <a uiSref="address" class="btn btn-outline-rounded btn-info"> Next <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span></a>
+        </div>
+    </div>
+</div>
+
