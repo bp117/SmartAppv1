@@ -1,7 +1,7 @@
 ---
 applications:
 - name: SmartAppv1
-  memory: 1256M
+  memory: 1G
   instances: 1
   
   timeout: 180
