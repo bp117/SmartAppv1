@@ -1,0 +1,160 @@
+import React, { useState, useEffect } from 'react';
+import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button } from '@material-ui/core';
+import { Group } from './types';
+
+interface GroupDialogProps {
+  open: boolean;
+  group?: Group;
+  onSave: (group: Group) => void;
+  onClose: () => void;
+}
+
+const GroupDialog: React.FC<GroupDialogProps> = ({ open, group, onSave, onClose }) => {
+  const [name, setName] = useState('');
+
+  useEffect(() => {
+    if (group) setName(group.name);
+    else setName('');
+  }, [group]);
+
+  const handleSave = () => {
+    if (name) {
+      const newGroup: Group = {
+        id: group ? group.id : Date.now().toString(),
+        name: name,
+        parentId: group ? group.parentId : null,
+      };
+      onSave(newGroup);
+      onClose();
+    }
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>{group ? 'Edit Group' : 'Add Group'}</DialogTitle>
+      <DialogContent>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="name"
+          label="Group Name"
+          type="text"
+          fullWidth
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">Cancel</Button>
+        <Button onClick={handleSave} color="primary">Save</Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+export default GroupDialog;
+
+
+import React from 'react';
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@material-ui/core';
+
+interface DeleteConfirmationDialogProps {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+}
+
+const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({ open, onClose, onConfirm }) => {
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Delete Group</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Are you sure you want to delete this group? This action cannot be undone.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={onConfirm} color="secondary">
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+export default DeleteConfirmationDialog;
+
+// GroupsTab.tsx
+import React, { useState, useContext } from 'react';
+import { GroupsContext } from './GroupsContext';
+import { DataGrid, GridColDef, GridRowsProp } from '@material-ui/data-grid';
+import { Button } from '@material-ui/core';
+import GroupDialog from './GroupDialog';
+import DeleteConfirmationDialog from './DeleteConfirmationDialog';
+import { Group } from './types';
+
+const GroupsTab: React.FC = () => {
+  const { groups, addGroup, updateGroup, deleteGroup } = useContext(GroupsContext);
+  const [isGroupDialogOpen, setIsGroupDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
+
+  const openAddGroupDialog = () => {
+    setSelectedGroup(null);
+    setIsGroupDialogOpen(true);
+  };
+
+  const openEditGroupDialog = (group: Group) => {
+    setSelectedGroup(group);
+    setIsGroupDialogOpen(true);
+  };
+
+  const openDeleteDialog = (group: Group) => {
+    setSelectedGroup(group);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleSaveGroup = (group: Group) => {
+    if (selectedGroup) updateGroup(group);
+    else addGroup(group);
+    setIsGroupDialogOpen(false);
+  };
+
+  const handleDeleteGroup = () => {
+    if (selectedGroup) {
+      deleteGroup(selectedGroup.id);
+      setIsDeleteDialogOpen(false);
+    }
+  };
+
+  const columns: GridColDef[] = [
+    { field: 'name', headerName: 'Group Name', width: 300 },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      width: 150,
+      renderCell: (params) => (
+        <>
+          <Button color="primary" onClick={() => openEditGroupDialog(params.row as Group)}>Edit</Button>
+          <Button color="secondary" onClick={() => openDeleteDialog(params.row as Group)}>Delete</Button>
+        </>
+      ),
+    },
+  ];
+
+  const rows: GridRowsProp = groups.map(group => ({ id: group.id, name: group.name, parentId: group.parentId }));
+
+  return (
+    <div style={{ height: 400, width: '100%' }}>
+      <Button onClick={openAddGroupDialog} color="primary">Add Group</Button>
+      <DataGrid rows={rows} columns={columns} pageSize={5} checkboxSelection disableSelectionOnClick />
+      <GroupDialog open={isGroupDialogOpen} group={selectedGroup} onSave={handleSaveGroup} onClose={() => setIsGroupDialogOpen(false)} />
+      <DeleteConfirmationDialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)} onConfirm={handleDeleteGroup} />
+    </div>
+  );
+};
+
+export default GroupsTab;
