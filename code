@@ -158,3 +158,100 @@ const GroupsTab: React.FC = () => {
 };
 
 export default GroupsTab;
+
+
+import React, { useState, useEffect } from 'react';
+import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, FormControl, InputLabel, Select, MenuItem, Chip, Input } from '@material-ui/core';
+import { Group } from './types';
+
+interface GroupDialogProps {
+  open: boolean;
+  group?: Group; // Undefined when adding a new group
+  onSave: (group: Group) => void;
+  onClose: () => void;
+}
+
+// Sample roles for selection
+const availableRoles = [
+  { id: 'admin', name: 'Admin' },
+  { id: 'editor', name: 'Editor' },
+  { id: 'viewer', name: 'Viewer' },
+];
+
+const GroupDialog: React.FC<GroupDialogProps> = ({ open, group, onSave, onClose }) => {
+  const [name, setName] = useState('');
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (group) {
+      setName(group.name);
+      setSelectedRoles(group.roles || []);
+    } else {
+      setName('');
+      setSelectedRoles([]);
+    }
+  }, [group]);
+
+  const handleSave = () => {
+    const savedGroup: Group = {
+      ...group,
+      name: name,
+      roles: selectedRoles,
+      id: group ? group.id : Math.random().toString(36).substr(2, 9),
+      subGroups: group ? group.subGroups : [],
+    };
+    onSave(savedGroup);
+    onClose();
+  };
+
+  const handleRoleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setSelectedRoles(event.target.value as string[]);
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>{group ? 'Edit Group' : 'Add Group'}</DialogTitle>
+      <DialogContent>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="name"
+          label="Group Name"
+          type="text"
+          fullWidth
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Roles</InputLabel>
+          <Select
+            multiple
+            value={selectedRoles}
+            onChange={handleRoleChange}
+            input={<Input id="select-multiple-chip" />}
+            renderValue={(selected: any) => (
+              <div>
+                {(selected as string[]).map(value => (
+                  <Chip key={value} label={availableRoles.find(role => role.id === value)?.name} style={{ margin: 2 }} />
+                ))}
+              </div>
+            )}
+          >
+            {availableRoles.map(role => (
+              <MenuItem key={role.id} value={role.id}>
+                {role.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">Cancel</Button>
+        <Button onClick={handleSave} color="primary">Save</Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+export default GroupDialog;
+
