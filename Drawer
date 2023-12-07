@@ -1,0 +1,191 @@
+import React, { useState } from "react";
+import clsx from "clsx";
+
+import Drawer from "@material-ui/core/Drawer";
+import Collapse from "@material-ui/core/Collapse";
+import { makeStyles } from "@material-ui/core/styles";
+import ListItem from "@material-ui/core/ListItem";
+import List from "@material-ui/core/List";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListAltIcon from "@material-ui/icons/ListAlt";
+import HomeIcon from "@material-ui/icons/Home";
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
+
+import PageviewIcon from "@material-ui/icons/Pageview";
+import DoneAllIcon from "@material-ui/icons/DoneAll";
+import CategoryIcon from "@material-ui/icons/Category";
+
+const drawerWidth = 240;
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: "flex"
+  },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+    whiteSpace: "nowrap"
+  },
+  drawerOpen: {
+    width: drawerWidth,
+    transition: theme.transitions.create("width", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen
+    })
+  },
+  drawerClose: {
+    transition: theme.transitions.create("width", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen
+    }),
+    overflowX: "hidden",
+    width: theme.spacing(9) + 1
+  },
+  listItem: {
+    fontSize: theme.typography.pxToRem(18),
+    height: 48,
+    transition: theme.transitions.create("padding", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen
+    })
+  },
+  listItemClose: {
+    paddingLeft: theme.spacing(3)
+  },
+  toolbar: theme.mixins.toolbar,
+  nested: {
+    paddingLeft: theme.spacing(4)
+  }
+}));
+
+export default ({ open = false }) => {
+  const classes = useStyles();
+  const [openIndex, setOpenIndex] = useState(-1);
+
+  const handleClick = index => () => {
+    if (index === openIndex) {
+      setOpenIndex(-1);
+    } else {
+      setOpenIndex(index);
+    }
+  };
+
+  return (
+    <Drawer
+      variant="permanent"
+      className={clsx(classes.drawer, {
+        [classes.drawerOpen]: open,
+        [classes.drawerClose]: !open
+      })}
+      classes={{
+        paper: clsx({
+          [classes.drawerOpen]: open,
+          [classes.drawerClose]: !open
+        })
+      }}
+      anchor="left"
+      open={open}
+    >
+      <div className={classes.toolbar} />
+      <ListItem
+        className={clsx(classes.listItem, {
+          [classes.listItemClose]: !open
+        })}
+        button
+      >
+        <ListItemIcon>
+          <HomeIcon />
+        </ListItemIcon>
+        <ListItemText primary={"Home"} />
+      </ListItem>
+      {rootMenus.map(({ name, menus = [] }, index) => (
+        <React.Fragment key={index}>
+          <ListItem
+            className={clsx(classes.listItem, {
+              [classes.listItemClose]: !open
+            })}
+            button
+            onClick={handleClick(index)}
+          >
+            <ListItemIcon>
+              <ListAltIcon />
+            </ListItemIcon>
+            <ListItemText primary={name} />
+            {openIndex === index ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+
+          <Collapse in={openIndex === index} timeout="auto" unmountOnExit>
+            <>
+              <List component="div" disablePadding>
+                {menus.map(({ name, to = "/", icon: IconComponent }, i) => (
+                  <ListItem
+                    className={clsx(classes.listItem, {
+                      [classes.nested]: open,
+                      [classes.listItemClose]: !open
+                    })}
+                    key={i}
+                    button
+                  >
+                    <ListItemIcon>
+                      <IconComponent />
+                    </ListItemIcon>
+                    <ListItemText primary={name} />
+                  </ListItem>
+                ))}
+              </List>
+            </>
+          </Collapse>
+        </React.Fragment>
+      ))}
+    </Drawer>
+  );
+};
+
+const rootMenus = [
+  {
+    name: "Order",
+    menus: [
+      {
+        name: "List",
+        to: "/orders",
+        icon: PageviewIcon
+      }
+    ]
+  },
+  {
+    name: "Settings",
+    menus: [
+      {
+        name: "Notification",
+        icon: PageviewIcon
+      },
+      {
+        name: "Blabla",
+        icon: DoneAllIcon
+      },
+      {
+        name: "Boohoo",
+        icon: CategoryIcon
+      }
+    ]
+  },
+  {
+    name: "Components",
+    menus: [
+      {
+        name: "Button",
+        icon: PageviewIcon
+      },
+      {
+        name: "Drawer",
+        icon: DoneAllIcon
+      },
+      {
+        name: "AppBar",
+        icon: CategoryIcon
+      }
+    ]
+  }
+];
