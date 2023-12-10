@@ -188,3 +188,97 @@ const RolesTab = () => {
 };
 
 export default RolesTab;
+
+
+import React, { useState, useEffect } from 'react';
+import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, Chip } from '@material-ui/core';
+import { Group } from './types';
+
+interface GroupDialogProps {
+  open: boolean;
+  group?: Group;
+  onSave: (group: Group) => void;
+  onClose: () => void;
+}
+
+const GroupDialog: React.FC<GroupDialogProps> = ({ open, group, onSave, onClose }) => {
+  const [name, setName] = useState('');
+  const [subGroupNames, setSubGroupNames] = useState<string[]>([]); // Store subgroup names
+  const [subGroupNameInput, setSubGroupNameInput] = useState(''); // Input for new subgroup name
+
+  useEffect(() => {
+    if (group) {
+      setName(group.name);
+      setSubGroupNames(group.subGroups.map(subGroup => subGroup.name));
+    } else {
+      setName('');
+      setSubGroupNames([]);
+    }
+  }, [group]);
+
+  const handleSave = () => {
+    const savedGroup: Group = {
+      ...group,
+      name,
+      id: group ? group.id : Math.random().toString(36).substr(2, 9),
+      subGroups: subGroupNames.map(name => ({ id: Math.random().toString(36).substr(2, 9), name })),
+    };
+    onSave(savedGroup);
+    onClose();
+  };
+
+  const handleAddSubGroup = () => {
+    if (subGroupNameInput) {
+      setSubGroupNames([...subGroupNames, subGroupNameInput]);
+      setSubGroupNameInput('');
+    }
+  };
+
+  const handleDeleteSubGroup = (nameToDelete: string) => {
+    setSubGroupNames(subGroupNames.filter(name => name !== nameToDelete));
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>{group ? 'Edit Group' : 'Add Group'}</DialogTitle>
+      <DialogContent>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="name"
+          label="Group Name"
+          type="text"
+          fullWidth
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <TextField
+          margin="dense"
+          id="sub-group-name"
+          label="Subgroup Name"
+          type="text"
+          fullWidth
+          value={subGroupNameInput}
+          onChange={(e) => setSubGroupNameInput(e.target.value)}
+          onKeyPress={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddSubGroup(); } }}
+        />
+        <div style={{ marginTop: '10px' }}>
+          {subGroupNames.map((subGroupName, index) => (
+            <Chip
+              key={index}
+              label={subGroupName}
+              onDelete={() => handleDeleteSubGroup(subGroupName)}
+              style={{ margin: '5px' }}
+            />
+          ))}
+        </div>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">Cancel</Button>
+        <Button onClick={handleSave} color="primary">Save</Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+export default GroupDialog;
