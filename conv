@@ -1,6 +1,5 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 
-// Define the shape of your context state
 interface Message {
   role: string;
   content: string;
@@ -10,81 +9,68 @@ interface Conversation {
   _id: string;
   title: string;
   messages: Message[];
-  usecaseId: string;
-  userId: string;
-  createdBy: string;
-  modifiedBy: string;
 }
 
 interface ConversationsContextProps {
   conversations: Conversation[];
-  fetchConversations: () => void;
-  saveConversation: (conversation: Conversation) => void;
+  currentConversationId: string | null;
+  setConversations: React.Dispatch<React.SetStateAction<Conversation[]>>;
+  setCurrentConversationId: React.Dispatch<React.SetStateAction<string | null>>;
+  addConversation: (conversation: Conversation) => void;
   updateConversation: (conversation: Conversation) => void;
   deleteConversation: (conversationId: string) => void;
 }
 
-// Create the context
+// Create the context with default values
 export const ConversationsContext = createContext<ConversationsContextProps>({
   conversations: [],
-  fetchConversations: () => {},
-  saveConversation: () => {},
+  currentConversationId: null,
+  setConversations: () => {},
+  setCurrentConversationId: () => {},
+  addConversation: () => {},
   updateConversation: () => {},
   deleteConversation: () => {},
 });
 
-// Create a provider component
 export const ConversationsProvider: React.FC = ({ children }) => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
 
-  const fetchConversations = () => {
-    fetch('/api/conversations')
-      .then((response) => response.json())
-      .then((data) => setConversations(data))
-      .catch((error) => console.error('Error fetching conversations:', error));
-  };
-
-  const saveConversation = (newConversation: Conversation) => {
-    fetch('/api/conversations', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newConversation),
-    })
-    .then((response) => response.json())
-    .then(() => fetchConversations()) // Refresh the list after saving
-    .catch((error) => console.error('Error saving conversation:', error));
-  };
-
-  const updateConversation = (updatedConversation: Conversation) => {
-    fetch(`/api/conversations/${updatedConversation._id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updatedConversation),
-    })
-    .then((response) => response.json())
-    .then(() => fetchConversations()) // Refresh the list after updating
-    .catch((error) => console.error('Error updating conversation:', error));
-  };
-
-  const deleteConversation = (conversationId: string) => {
-    fetch(`/api/conversations/${conversationId}`, {
-      method: 'DELETE',
-    })
-    .then((response) => response.json())
-    .then(() => fetchConversations()) // Refresh the list after deletion
-    .catch((error) => console.error('Error deleting conversation:', error));
-  };
-
-  useEffect(() => {
-    fetchConversations();
+  const addConversation = useCallback((conversation: Conversation) => {
+    setConversations((prevConversations) => [...prevConversations, conversation]);
   }, []);
 
+  const updateConversation = useCallback((updatedConversation: Conversation) => {
+    setConversations((prevConversations) =>
+      prevConversations.map((conv) => 
+        conv._id === updatedConversation._id ? updatedConversation : conv)
+    );
+  }, []);
+
+  const deleteConversation = useCallback((conversationId: string) => {
+    setConversations((prevConversations) =>
+      prevConversations.filter((conv) => conv._id !== conversationId)
+    );
+  }, []);
+
+  // Context provider value
+  const contextValue = {
+    conversations,
+    currentConversationId,
+    setConversations,
+    setCurrentConversationId,
+    addConversation,
+    updateConversation,
+    deleteConversation,
+  };
+
   return (
-    <ConversationsContext.Provider value={{ conversations, fetchConversations, saveConversation, updateConversation, deleteConversation }}>
+    <ConversationsContext.Provider value={contextValue}>
       {children}
     </ConversationsContext.Provider>
   );
 };
+
 
 
 //sidebar
