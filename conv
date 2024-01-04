@@ -1,0 +1,227 @@
+import React, { createContext, useState, useEffect } from 'react';
+
+// Define the shape of your context state
+interface Message {
+  role: string;
+  content: string;
+}
+
+interface Conversation {
+  _id: string;
+  title: string;
+  messages: Message[];
+  usecaseId: string;
+  userId: string;
+  createdBy: string;
+  modifiedBy: string;
+}
+
+interface ConversationsContextProps {
+  conversations: Conversation[];
+  fetchConversations: () => void;
+  saveConversation: (conversation: Conversation) => void;
+  updateConversation: (conversation: Conversation) => void;
+  deleteConversation: (conversationId: string) => void;
+}
+
+// Create the context
+export const ConversationsContext = createContext<ConversationsContextProps>({
+  conversations: [],
+  fetchConversations: () => {},
+  saveConversation: () => {},
+  updateConversation: () => {},
+  deleteConversation: () => {},
+});
+
+// Create a provider component
+export const ConversationsProvider: React.FC = ({ children }) => {
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+
+  const fetchConversations = () => {
+    fetch('/api/conversations')
+      .then((response) => response.json())
+      .then((data) => setConversations(data))
+      .catch((error) => console.error('Error fetching conversations:', error));
+  };
+
+  const saveConversation = (newConversation: Conversation) => {
+    fetch('/api/conversations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newConversation),
+    })
+    .then((response) => response.json())
+    .then(() => fetchConversations()) // Refresh the list after saving
+    .catch((error) => console.error('Error saving conversation:', error));
+  };
+
+  const updateConversation = (updatedConversation: Conversation) => {
+    fetch(`/api/conversations/${updatedConversation._id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedConversation),
+    })
+    .then((response) => response.json())
+    .then(() => fetchConversations()) // Refresh the list after updating
+    .catch((error) => console.error('Error updating conversation:', error));
+  };
+
+  const deleteConversation = (conversationId: string) => {
+    fetch(`/api/conversations/${conversationId}`, {
+      method: 'DELETE',
+    })
+    .then((response) => response.json())
+    .then(() => fetchConversations()) // Refresh the list after deletion
+    .catch((error) => console.error('Error deleting conversation:', error));
+  };
+
+  useEffect(() => {
+    fetchConversations();
+  }, []);
+
+  return (
+    <ConversationsContext.Provider value={{ conversations, fetchConversations, saveConversation, updateConversation, deleteConversation }}>
+      {children}
+    </ConversationsContext.Provider>
+  );
+};
+
+
+//sidebar
+
+import React, { useContext, useState } from 'react';
+import { ConversationsContext } from './ConversationsContext';
+import { Button, List, ListItem, ListItemText, IconButton, ListItemIcon, TextField } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import ChatIcon from '@mui/icons-material/Chat';
+import AddIcon from '@mui/icons-material/Add';
+
+const Sidebar: React.FC = () => {
+    const { conversations, updateConversation, deleteConversation } = useContext(ConversationsContext);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [editedTitle, setEditedTitle] = useState('');
+
+    const handleEdit = (id: string, title: string) => {
+        setEditingId(id);
+        setEditedTitle(title);
+    };
+
+    const handleSave = (id: string) => {
+        updateConversation({ ...conversations.find(conv => conv._id === id), title: editedTitle });
+        setEditingId(null);
+    };
+
+    const handleDelete = (id: string) => {
+        deleteConversation(id);
+    };
+
+    return (
+        <div className="w-1/6 overflow-y-auto p-4 bg-gradient-to-r from-gray-900 to-gray-600 text-white text-base" style={{ scrollPaddingTop: '80px'}}>
+            <Button startIcon={<AddIcon />} variant="contained" color="primary" className="mb-4 justify-center">
+                New Conversation
+            </Button>
+
+            <List>
+                {conversations.map(chat => (
+                    <ListItem key={chat._id} className="mb-2 text-sm" button onClick={() => { /* Handle conversation selection */ }}>
+                        <ListItemIcon>
+                            <ChatIcon className="text-white" fontSize='small' />
+                        </ListItemIcon>
+                        {editingId === chat._id ? (
+                            <TextField
+                                value={editedTitle}
+                                onChange={(e) => setEditedTitle(e.target.value)}
+                                autoFocus
+                            />
+                        ) : (
+                            <ListItemText primary={chat.title} className='truncate' />
+                        )}
+                        {editingId === chat._id ? (
+                            <>
+                                <IconButton onClick={() => handleSave(chat._id)}>
+                                    <CheckIcon className="text-white" fontSize='small' />
+                                </IconButton>
+                                <IconButton onClick={() => setEditingId(null)}>
+                                    <CloseIcon className="text-white" fontSize='small' />
+                                </IconButton>
+                            </>
+                        ) : (
+                            <>
+                                <IconButton onClick={() => handleEdit(chat._id, chat.title)}>
+                                    <EditIcon className="text-white" fontSize='small' />
+                                </IconButton>
+                                <IconButton onClick={() => handleDelete(chat._id)}>
+                                    <DeleteIcon className="text-white" fontSize='small' />
+                                </IconButton>
+                            </>
+                        )}
+                    </ListItem>
+                ))}
+            </List>
+        </div>
+    );
+}
+
+export default Sidebar;
+//chatin
+
+import React, { useContext, useState, useEffect, useRef } from 'react';
+import { ConversationsContext } from './ConversationsContext';
+import Message from './Message';
+import { TextField, IconButton, InputAdornment, Button, SelectChangeEvent, Dialog, DialogActions, DialogContent, DialogTitle, LinearProgress } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
+import { ChevronDownIcon, DocumentPlusIcon } from '@heroicons/react/24/solid';
+import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+
+interface ChatInterfaceProps {
+    theme: string;
+}
+
+interface SummaryResponse {
+    duration: string;
+    result: {
+        context: string;
+        book: string;
+        section_title: string;
+        hyperlink: string;
+        generated_resp: string;
+    };
+}
+type EnvironmentKey = 'GCP' | 'Azure' | 'On-prem';
+
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ theme }) => {
+    const { conversations, updateConversation } = useContext(ConversationsContext);
+    const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+    const currentMessages = conversations.find(conv => conv._id === currentConversationId)?.messages || [];
+    // ... other state variables
+
+    // ... other functions
+
+    const handleSendMessage = async () => {
+        // ... existing logic
+        // Update the current conversation with the new message
+        if (currentConversationId) {
+            const updatedConversation = {
+                ...conversations.find(conv => conv._id === currentConversationId),
+                messages: [...currentMessages, newMessage] // newMessage needs to be defined as per your logic
+            };
+            updateConversation(updatedConversation);
+        }
+        setInputValue('');
+    };
+
+    // ... other code
+
+    return (
+        <div className={`flex-1 p-4 ${theme === 'dark' ? 'bg-gradient-to-b from-black to-gray-700 text-white' : ''}`}>
+            {/* ... existing JSX elements */}
+            {/* Add additional JSX as per your requirement */}
+        </div>
+    );
+}
+
+export default ChatInterface;
