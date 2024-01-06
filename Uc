@@ -1,3 +1,42 @@
+import React from 'react';
+import { Typography, Container, Button, Box, useTheme } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import LockOpenIcon from '@mui/icons-material/LockOpen'; // Icon indicating unlocking or access
+
+const Unauthorized: React.FC = () => {
+  const navigate = useNavigate();
+  const theme = useTheme();
+
+  const handleSignIn = () => {
+    navigate('/signin'); // Navigate to the sign-in page
+  };
+
+  return (
+    <Container maxWidth="md" style={{ textAlign: 'center', marginTop: '100px', padding: '40px' }}>
+      <Box mb={4} color={theme.palette.warning.main}>
+        <LockOpenIcon style={{ fontSize: 100 }} />
+      </Box>
+      <Typography variant="h2" color="textPrimary" gutterBottom>
+        Unauthorized
+      </Typography>
+      <Typography variant="h6" style={{ marginBottom: '30px' }}>
+        You need to sign in to view this page.
+      </Typography>
+      <Button 
+        variant="outlined" 
+        color="primary" 
+        onClick={handleSignIn} 
+        size="large"
+      >
+        Sign In
+      </Button>
+    </Container>
+  );
+};
+
+export default Unauthorized;
+
+
 
 import React from 'react';
 import { Typography, Container, Button, Box, useTheme } from '@mui/material';
