@@ -176,3 +176,71 @@ const AppWrapper: React.FC = () => {
 };
 
 export default AppWrapper;
+
+import React, { createContext, useState, useCallback, ReactNode } from 'react';
+import axios from 'axios';
+
+// User and other interface definitions
+
+interface UserProviderProps {
+  children: ReactNode;
+}
+
+export const UserContext = createContext</* Your Context Type */>({
+  // Default values
+});
+
+export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
+  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+  const [allUsers, setAllUsers] = useState<User[]>([]); // State to store all users
+
+  const fetchAllUsers = useCallback(async () => {
+    try {
+      const response = await axios.get('/api/users');
+      setAllUsers(response.data);
+    } catch (error) {
+      console.error("Error fetching all users:", error);
+    }
+  }, []);
+
+  const saveNewUser = useCallback(async (newUser: User) => {
+    try {
+      await axios.post('/api/users', newUser);
+      fetchAllUsers(); // Refresh the user list
+    } catch (error) {
+      console.error("Error saving new user:", error);
+    }
+  }, [fetchAllUsers]);
+
+  const checkUserExistenceAndSave = useCallback(async () => {
+    try {
+      const userInfoResponse = await axios.get('/userinfo');
+      if (userInfoResponse.data && userInfoResponse.data.user_name) {
+        const fetchedUser: User = /* Map userInfoResponse.data to User */;
+        setLoggedInUser(fetchedUser);
+
+        // Check if user exists in allUsers array
+        const userExists = allUsers.some(user => user.userId === fetchedUser.userId);
+        if (!userExists) {
+          saveNewUser(fetchedUser);
+        }
+      } else {
+        setLoggedInUser(null);
+      }
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+      setLoggedInUser(null);
+    }
+  }, [allUsers, saveNewUser]);
+
+  useEffect(() => {
+    fetchAllUsers(); // Fetch all users when the app loads
+  }, [fetchAllUsers]);
+
+  return (
+    <UserContext.Provider value={{ loggedInUser, setLoggedInUser, checkUserExistenceAndSave }}>
+      {children}
+    </UserContext.Provider>
+  );
+};
+
