@@ -1,3 +1,43 @@
+
+import React from 'react';
+import { Typography, Container, Button, Box, useTheme } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import BlockIcon from '@mui/icons-material/Block'; // Importing an icon for visual appeal
+
+const AccessDenied: React.FC = () => {
+  const navigate = useNavigate();
+  const theme = useTheme();
+
+  const handleGoHome = () => {
+    navigate('/'); // Navigate to the home page
+  };
+
+  return (
+    <Container maxWidth="md" style={{ textAlign: 'center', marginTop: '100px' }}>
+      <Box mb={4} style={{ color: theme.palette.error.main }}>
+        <BlockIcon style={{ fontSize: 100 }} />
+      </Box>
+      <Typography variant="h2" color="error" gutterBottom>
+        Access Denied
+      </Typography>
+      <Typography variant="h5" gutterBottom style={{ marginBottom: '30px' }}>
+        Oops! You don't have the permission to view this page.
+      </Typography>
+      <Button 
+        variant="contained" 
+        color="primary" 
+        onClick={handleGoHome} 
+        size="large"
+      >
+        Go to Home Page
+      </Button>
+    </Container>
+  );
+};
+
+export default AccessDenied;
+
+
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
