@@ -244,3 +244,35 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   );
 };
 
+---- Protected Route ----
+
+import React, { useContext } from 'react';
+import { Navigate, Route, useLocation } from 'react-router-dom';
+import { UserContext } from './UserContext';
+
+const ProtectedRoute = ({ component: Component, ...rest }) => {
+  const { loggedInUser } = useContext(UserContext);
+  const location = useLocation();
+
+  if (!loggedInUser) {
+    // Redirect to unauthorized view or sign-in page
+    // Replace '/unauthorized' with the path to your unauthorized or sign-in view
+    return <Navigate to="/unauthorized" state={{ from: location }} replace />;
+  }
+
+  return <Route {...rest} element={<Component />} />;
+};
+---unauth----
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+const Unauthorized: React.FC = () => {
+  return (
+    <div>
+      <h1>Unauthorized Access</h1>
+      <p>You are not authorized to view this page. Please <Link to="/signin">sign in</Link>.</p>
+    </div>
+  );
+};
+
+export default Unauthorized;
