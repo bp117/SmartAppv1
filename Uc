@@ -84,3 +84,95 @@ export const UserProvider: React.FC = ({ children }) => {
     </UserContext.Provider>
   );
 };
+---new----
+import React, { createContext, useState, useCallback } from 'react';
+import axios from 'axios';
+
+// User interface based on your schema
+interface User {
+  userId: number;
+  username: string;
+  lanId: string;
+  adIamRootGroupId: number;
+  adIamSubGroupIds: number[];
+  createdBy: string;
+  modifiedBy: string;
+}
+
+interface UserContextProps {
+  loggedInUser: User | null;
+  setLoggedInUser: React.Dispatch<React.SetStateAction<User | null>>;
+  checkUserExistenceAndSave: () => void;
+}
+
+export const UserContext = createContext<UserContextProps>({
+  loggedInUser: null,
+  setLoggedInUser: () => {},
+  checkUserExistenceAndSave: () => {},
+});
+
+export const UserProvider: React.FC = ({ children }) => {
+  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+
+  const checkUserExistenceAndSave = useCallback(async () => {
+    try {
+      const response = await axios.get('/userinfo');
+      if (response.data && response.data.user_name) {
+        setLoggedInUser(response.data);
+        // Here, you should add logic to check if the user exists in your system
+        // and make an API call to save the user if they do not exist.
+      } else {
+        setLoggedInUser(null);
+      }
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+      setLoggedInUser(null);
+    }
+  }, []);
+
+  return (
+    <UserContext.Provider value={{ loggedInUser, setLoggedInUser, checkUserExistenceAndSave }}>
+      {children}
+    </UserContext.Provider>
+  );
+};
+---usage---
+import React, { useEffect, useContext } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { UserContext, UserProvider } from './UserContext';
+import Chat from './components/Chat';
+import Onboarding from './components/Onboarding';
+import PromptStudio from './components/PromptStudio';
+import UserManagement from './components/UserManagement';
+import Unauthorized from './components/Unauthorized';
+
+const App: React.FC = () => {
+  const { checkUserExistenceAndSave } = useContext(UserContext);
+
+  useEffect(() => {
+    checkUserExistenceAndSave();
+  }, [checkUserExistenceAndSave]);
+
+  return (
+    <Router>
+      <Routes>
+        <Route path="/chat" element={<Chat />} />
+        <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/prompt-studio" element={<PromptStudio />} />
+        <Route path="/user-management" element={<UserManagement />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        {/* Add other routes as needed */}
+      </Routes>
+    </Router>
+  );
+};
+
+const AppWrapper: React.FC = () => {
+  return (
+    <UserProvider>
+      <App />
+    </UserProvider>
+  );
+};
+
+export default AppWrapper;
