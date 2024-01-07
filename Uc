@@ -1,3 +1,54 @@
+
+const handleSendMessage = async () => {
+    setIsFirstMessageSent(true);
+    setBotIsTyping(true);
+
+    if (inputValue.trim()) {
+        const userMessage = { role: 'user', content: inputValue.trim() };
+        let updatedMessages = [];
+
+        // Check if it's a new conversation or an ongoing one
+        if (currentConversationId === null) {
+            // New conversation
+            updatedMessages = [userMessage];
+        } else {
+            // Ongoing conversation, fetch current messages and append new message
+            const currentConversation = conversations.find(conv => conv._id === currentConversationId);
+            if (currentConversation) {
+                updatedMessages = [...currentConversation.messages, userMessage];
+            }
+        }
+
+        // Fetch bot response
+        const botResponses = await fetchBotResponse(/* endpoint, payload */);
+        const botMessage = { role: 'bot', content: botResponses };
+        updatedMessages.push(botMessage);
+
+        if (currentConversationId === null) {
+            // Create a new conversation
+            const newConversation = {
+                _id: Date.now().toString(),
+                title: inputValue.trim().split(' ').slice(0, 20).join(' ') + '...',
+                messages: updatedMessages
+            };
+            addConversation(newConversation);
+            setCurrentConversationId(newConversation._id);
+        } else {
+            // Update an existing conversation
+            const updatedConversation = {
+                ...conversations.find(conv => conv._id === currentConversationId),
+                messages: updatedMessages
+            };
+            updateConversation(updatedConversation);
+        }
+
+        setInputValue(''); // Clear the input field
+        setBotIsTyping(false); // Turn off the bot typing indicator
+    }
+};
+
+
+
 import React from 'react';
 import { Typography, Container, Button, Box, useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
