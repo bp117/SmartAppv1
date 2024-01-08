@@ -1,0 +1,7 @@
+Generate user stories based on the following feature, ensuring they adhere to the INVEST principles (Independent, Negotiable, Valuable, Estimable, Small, Testable).
+Feature Description: Campus AT card addition and link to online banking account.
+User Stories: Create concise stories, each focusing on a unique aspect of the feature.
+Acceptance Criteria: Outline clear criteria for each story.
+BDD Test Cases: Formulate 'Given, When, Then' test scenarios.
+Synthetic Test Data: Provide example data for testing.
+Ensure each story is small, clear, and testable.
