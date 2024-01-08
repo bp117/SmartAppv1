@@ -1,3 +1,46 @@
+const handleSendMessage = async () => {
+    if (inputValue.trim()) {
+        const userMessage = { role: 'user', content: inputValue.trim() };
+        setBotIsTyping(true);
+
+        // Update conversation with user message
+        await updateConversationWithMessage(userMessage);
+
+        // Fetch bot response
+        const botResponses = await fetchBotResponse(/* endpoint, payload */);
+        const botMessage = { role: 'bot', content: botResponses };
+        
+        // Update conversation with bot message
+        await updateConversationWithMessage(botMessage);
+
+        setBotIsTyping(false);
+        setInputValue('');
+    }
+};
+const updateConversationWithMessage = async (message) => {
+    return new Promise((resolve) => {
+        if (currentConversationId === null) {
+            const newConversation = {
+                _id: Date.now().toString(),
+                title: 'New Conversation',
+                messages: [message]
+            };
+            addConversation(newConversation);
+            setCurrentConversationId(newConversation._id);
+            resolve();
+        } else {
+            const updatedConversation = conversations.find(conv => conv._id === currentConversationId);
+            if (updatedConversation) {
+                const updatedConvWithMessage = {
+                    ...updatedConversation,
+                    messages: [...updatedConversation.messages, message]
+                };
+                updateConversation(updatedConvWithMessage);
+                resolve();
+            }
+        }
+    });
+};
 
 const handleSendMessage = async () => {
     setIsFirstMessageSent(true);
