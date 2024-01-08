@@ -1,3 +1,48 @@
+const handleSendMessage = async () => {
+    if (inputValue.trim()) {
+        const newMessage = { role: 'user', content: inputValue.trim() };
+        let currentId = currentConversationId;
+
+        if (currentId === null) {
+            // Create a new conversation
+            const newConversation = {
+                convId: Date.now().toString(),
+                title: inputValue.trim().split(' ').slice(0, 20).join(' ') + '...',
+                messages: [newMessage],
+                // Add other necessary fields
+            };
+            saveConversation(newConversation);
+            currentId = newConversation.convId;
+        } else {
+            // Add message to existing conversation
+            const updatedConversation = {
+                ...conversations.find(conv => conv.convId === currentId),
+                messages: [...conversations.find(conv => conv.convId === currentId).messages, newMessage],
+            };
+            updateConversation(updatedConversation);
+        }
+
+        // Update currentConversationId
+        setCurrentConversationId(currentId);
+
+        // Fetch bot response and update the conversation
+        const botResponses = await fetchBotResponse(/* endpoint, payload */);
+        const botMessage = { role: 'bot', content: botResponses };
+        const updatedConversation = {
+            ...conversations.find(conv => conv.convId === currentId),
+            messages: [...conversations.find(conv => conv.convId === currentId).messages, botMessage],
+        };
+        updateConversation(updatedConversation);
+
+        setInputValue(''); // Clear the input field
+    }
+};
+
+
+
+
+
+
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 
 interface Message {
