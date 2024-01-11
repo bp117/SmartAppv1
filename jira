@@ -1,0 +1,44 @@
+[
+    {
+        "storyId": "STORY-1",
+        "storyPoints": 5,
+        "featureId": "FEAT-101",
+        "acceptanceCriteria": "Criteria for STORY-1",
+        "projectId": "PROJ-1",
+        "applicationName": "App Alpha",
+        "dependencies": ["DEP-11", "DEP-12"],
+        "blockers": ["BLOCK-11"],
+        "fixVersions": ["v1.0", "v1.2"],
+        "attachments": ["http://example.com/attachment1", "http://example.com/attachment2"]
+    },
+    // ... 9 more records with similar structure
+]
+const express = require('express');
+const fs = require('fs');
+const app = express();
+const port = 3000;
+
+// Read the mock data from the file
+let mockData = [];
+fs.readFile('mockData.json', 'utf8', (err, data) => {
+    if (err) {
+        console.error("Error reading file:", err);
+        return;
+    }
+    mockData = JSON.parse(data);
+});
+
+app.get('/mock-story/:id', (req, res) => {
+    const storyId = req.params.id;
+    const storyDetails = mockData.find(story => story.storyId === storyId);
+
+    if (storyDetails) {
+        res.json(storyDetails);
+    } else {
+        res.status(404).send('Story not found');
+    }
+});
+
+app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+});
