@@ -138,3 +138,12 @@ function App() {
     );
 }
 
+function extractScore(text) {
+    const lines = text.split('\n');
+    const scoreLine = lines.find(line => line.includes('Final Score of story quality:'));
+    if (scoreLine) {
+        const match = scoreLine.match(/(\d+\.\d+)%/);
+        return match ? parseFloat(match[1]) : null;
+    }
+    return null;
+}
