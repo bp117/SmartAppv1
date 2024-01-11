@@ -42,3 +42,54 @@ app.get('/mock-story/:id', (req, res) => {
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
+
+
+import React, { useState } from 'react';
+import { TextField, Button, TextareaAutosize } from '@mui/material';
+
+function StoryFetcher() {
+    const [projectId, setProjectId] = useState('');
+    const [storyDetails, setStoryDetails] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleFetchStory = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetch(`/mock-story/${projectId}`);
+            const data = await response.json();
+            setStoryDetails(JSON.stringify(data, null, 2));
+        } catch (error) {
+            setStoryDetails('Error fetching story details');
+        }
+        setIsLoading(false);
+    };
+
+    return (
+        <div>
+            <TextField
+                label="Project ID"
+                value={projectId}
+                onChange={(e) => setProjectId(e.target.value)}
+                variant="outlined"
+                style={{ marginRight: '10px' }}
+            />
+            <Button 
+                variant="contained" 
+                onClick={handleFetchStory}
+                disabled={isLoading}
+            >
+                Fetch Story
+            </Button>
+            <TextareaAutosize
+                aria-label="Story details"
+                minRows={10}
+                placeholder="Story details will appear here..."
+                style={{ width: 300, marginTop: '20px' }}
+                value={storyDetails}
+                readOnly
+            />
+        </div>
+    );
+}
+
+export default StoryFetcher;
