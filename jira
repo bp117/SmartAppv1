@@ -93,3 +93,48 @@ function StoryFetcher() {
 }
 
 export default StoryFetcher;
+
+function extractScore(text) {
+    const match = text.match(/(\d+\.\d+)%/);
+    return match ? match[1] : null;
+}
+import React from 'react';
+
+function ScoreDisplay({ text }) {
+    const score = extractScore(text);
+
+    if (score === null) {
+        return <p>No score found</p>;
+    }
+
+    return (
+        <div className="score-display">
+            <h2>Story Quality Score</h2>
+            <div className="score">{score}%</div>
+        </div>
+    );
+}
+.score-display {
+    text-align: center;
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f8f8f8;
+}
+
+.score {
+    font-size: 2em;
+    color: #4CAF50; /* Green color */
+    font-weight: bold;
+}
+function App() {
+    const responseString = "Final Score of story quality: 36.84%";
+
+    return (
+        <div>
+            <ScoreDisplay text={responseString} />
+        </div>
+    );
+}
+
