@@ -281,3 +281,191 @@ const GroupDialog: React.FC<GroupDialogProps> = ({ open, group, onSave, onClose 
 
 export default GroupDialog;
 
+------29/1-------
+
+  import React, { useState, useEffect } from 'react';
+import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, Select, MenuItem, Chip } from '@material-ui/core';
+import { Group, SubGroup, UseCase } from './types';
+
+interface GroupDialogProps {
+  open: boolean;
+  group?: Group;
+  onSave: (group: Group) => void;
+  onClose: () => void;
+  useCases: UseCase[]; // Array of use cases for selection
+}
+
+const GroupDialog: React.FC<GroupDialogProps> = ({ open, group, onSave, onClose, useCases }) => {
+  const [name, setName] = useState('');
+  const [subGroups, setSubGroups] = useState<SubGroup[]>([]);
+
+  useEffect(() => {
+    if (group) {
+      setName(group.name);
+      setSubGroups(group.subGroups || []);
+    } else {
+      setName('');
+      setSubGroups([]);
+    }
+  }, [group]);
+
+  const handleSubGroupNameChange = (index, value) => {
+    const updatedSubGroups = subGroups.map((subGroup, idx) =>
+      index === idx ? { ...subGroup, subGroupName: value } : subGroup
+    );
+    setSubGroups(updatedSubGroups);
+  };
+
+  const handleUseCaseChange = (index, useCaseId) => {
+    const updatedSubGroups = subGroups.map((subGroup, idx) =>
+      index === idx ? { ...subGroup, useCaseId } : subGroup
+    );
+    setSubGroups(updatedSubGroups);
+  };
+
+  const handleSave = () => {
+    const savedGroup: Group = {
+      id: group ? group.id : Math.random().toString(36).substr(2, 9),
+      name,
+      subGroups,
+    };
+    onSave(savedGroup);
+    onClose();
+  };
+
+  const handleAddSubGroup = () => {
+    setSubGroups([...subGroups, { subGroupId: Math.random().toString(36).substr(2, 9), subGroupName: '', useCaseId: '' }]);
+  };
+
+  const handleDeleteSubGroup = (subGroupIdToDelete: string) => {
+    setSubGroups(subGroups.filter(subGroup => subGroup.subGroupId !== subGroupIdToDelete));
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>{group ? 'Edit Group' : 'Add Group'}</DialogTitle>
+      <DialogContent>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="name"
+          label="Group Name"
+          type="text"
+          fullWidth
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        {subGroups.map((subGroup, index) => (
+          <div key={subGroup.subGroupId}>
+            <TextField
+              margin="dense"
+              label="Subgroup Name"
+              type="text"
+              fullWidth
+              value={subGroup.subGroupName}
+              onChange={(e) => handleSubGroupNameChange(index, e.target.value)}
+            />
+            <Select
+              value={subGroup.useCaseId}
+              onChange={(e) => handleUseCaseChange(index, e.target.value)}
+              fullWidth
+            >
+              {useCases.map(useCase => (
+                <MenuItem key={useCase.id} value={useCase.id}>{useCase.name}</MenuItem>
+              ))}
+            </Select>
+            <Button onClick={() => handleDeleteSubGroup(subGroup.subGroupId)}>Delete Subgroup</Button>
+          </div>
+        ))}
+        <Button onClick={handleAddSubGroup}>Add Subgroup</Button>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">Cancel</Button>
+        <Button onClick={handleSave} color="primary">Save</Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+export default GroupDialog;
+
+
+import React, { useState, useEffect } from 'react';
+import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, Select, MenuItem } from '@material-ui/core';
+import { Group, SubGroup, UseCase } from './types';
+
+const GroupDialog = ({ open, group, onSave, onClose, useCases }) => {
+  // ... existing state declarations
+
+  useEffect(() => {
+    // ... existing useEffect logic
+  }, [group]);
+
+  // ... existing handler functions
+
+  const handleUseCaseChange = (index, useCaseId) => {
+    // ... existing logic for handling use case change
+  };
+
+  const handleRemoveUseCase = (index) => {
+    const updatedSubGroups = subGroups.map((subGroup, idx) =>
+      index === idx ? { ...subGroup, useCaseId: '' } : subGroup // Remove use case by setting it to an empty string
+    );
+    setSubGroups(updatedSubGroups);
+  };
+
+  const handleSave = () => {
+    // ... existing save logic
+  };
+
+  // ... other existing functions
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>{group ? 'Edit Group' : 'Add Group'}</DialogTitle>
+      <DialogContent>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="name"
+          label="Group Name"
+          type="text"
+          fullWidth
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        {subGroups.map((subGroup, index) => (
+          <div key={subGroup.subGroupId}>
+            <TextField
+              margin="dense"
+              label="Subgroup Name"
+              type="text"
+              fullWidth
+              value={subGroup.subGroupName}
+              onChange={(e) => handleSubGroupNameChange(index, e.target.value)}
+            />
+            <Select
+              value={subGroup.useCaseId}
+              onChange={(e) => handleUseCaseChange(index, e.target.value)}
+              fullWidth
+            >
+              <MenuItem value=""><em>None</em></MenuItem>
+              {useCases.map(useCase => (
+                <MenuItem key={useCase.id} value={useCase.id}>{useCase.name}</MenuItem>
+              ))}
+            </Select>
+            <Button onClick={() => handleRemoveUseCase(index)}>Remove Use Case</Button>
+            <Button onClick={() => handleDeleteSubGroup(subGroup.subGroupId)}>Delete Subgroup</Button>
+          </div>
+        ))}
+        <Button onClick={handleAddSubGroup}>Add Subgroup</Button>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">Cancel</Button>
+        <Button onClick={handleSave} color="primary">Save</Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+export default GroupDialog;
