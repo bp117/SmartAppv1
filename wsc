@@ -1,0 +1,50 @@
+Certainly! For a hackathon focusing on a Model as a Service (MaaS) project, the following solution deliverables should be submitted by the participants:
+
+### Solution Deliverables for MaaS Hackathon
+
+1. **Project Proposal**
+   - **Description**: A detailed document outlining the project's concept, goals, target audience, and intended impact.
+   - **Purpose**: To provide a clear understanding of the project's objectives and how it addresses the hackathon theme.
+   - **Format**: PDF or Word document.
+
+2. **High-Level Architecture Design**
+   - **Description**: A diagram and description of the overall system architecture, including data flow, components, and integration points.
+   - **Purpose**: To illustrate the structural design of the solution, showing how different components interact.
+   - **Format**: Visual diagrams (e.g., UML, flowcharts) and a descriptive document.
+
+3. **Technical Implementation**
+   - **Description**: The complete source code of the project, including any APIs developed, and detailed implementation notes.
+   - **Purpose**: To evaluate the technical competency and coding practices used in the project.
+   - **Format**: Source code in a version control repository (e.g., GitHub) and a README file.
+
+4. **Model Training and Evaluation Documentation**
+   - **Description**: Detailed documentation on the AI model's training process, datasets used, evaluation metrics, and performance results.
+   - **Purpose**: To assess the model selection, training rigor, and effectiveness in solving the given problem.
+   - **Format**: PDF or Word document, including graphs or tables as necessary.
+
+5. **API Documentation**
+   - **Description**: Comprehensive documentation of APIs, including endpoints, request/response formats, and sample calls.
+   - **Purpose**: To demonstrate the API-first approach and ease of integration with other systems.
+   - **Format**: Hosted documentation (e.g., Swagger) or a detailed PDF/Word document.
+
+6. **User Interface Prototype**
+   - **Description**: A prototype or mock-up of the user interface, if applicable.
+   - **Purpose**: To showcase the UI design, user experience, and interface functionality.
+   - **Format**: Interactive prototype (e.g., Figma, Adobe XD) or screenshots.
+
+7. **Testing Strategy and Results**
+   - **Description**: Documentation of the testing strategy, including test plans, test cases, and results of testing.
+   - **Purpose**: To demonstrate the thoroughness of testing and reliability of the solution.
+   - **Format**: PDF or Word document, possibly with links to test repositories or tools.
+
+8. **Final Presentation Slides**
+   - **Description**: A slide deck for the final presentation of the project.
+   - **Purpose**: To summarize the project, highlighting key features, benefits, and potential impact.
+   - **Format**: PowerPoint, Google Slides, or PDF.
+
+9. **Demo Video (Optional)**
+   - **Description**: A brief video demonstrating the project's functionality and features.
+   - **Purpose**: To provide a visual and practical demonstration of the project in action.
+   - **Format**: MP4 or link to a video hosting platform (e.g., YouTube).
+
+These deliverables are designed to provide a comprehensive overview of each team’s project, covering all aspects from concept to execution. This ensures a thorough evaluation by the judges on all critical parameters of the hackathon.
