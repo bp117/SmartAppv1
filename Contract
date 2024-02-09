@@ -1,0 +1,249 @@
+openapi: 3.0.0
+info:
+  title: Real-Time AI Voice Detection API
+  description: API for uploading, analyzing, and managing voice samples for a real-time AI voice detection system.
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8080/api
+paths:
+  /voice/upload:
+    post:
+      summary: Upload a voice sample
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sample:
+                  type: string
+                  description: Base64 encoded audio file content
+                metadata:
+                  type: object
+                  properties:
+                    userId:
+                      type: string
+                    sampleType:
+                      type: string
+                      enum: [original, synthetic]
+                    environment:
+                      type: string
+                      enum: [quiet, noisy, outdoor]
+                    description:
+                      type: string
+                      nullable: true
+              required:
+                - sample
+                - metadata
+      responses:
+        '200':
+          description: Voice sample uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  sampleId:
+                    type: string
+
+  /voice/analyze:
+    post:
+      summary: Analyze a voice sample
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sampleId:
+                  type: string
+              required:
+                - sampleId
+      responses:
+        '200':
+          description: Analysis result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisResult'
+
+  /voice/retrieve:
+    get:
+      summary: Retrieve voice sample analysis
+      parameters:
+        - in: query
+          name: sampleId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Analysis result for the requested sample
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisResult'
+
+  /voice/samples:
+    get:
+      summary: List all uploaded voice samples
+      responses:
+        '200':
+          description: List of voice samples
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  samples:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SampleMetadata'
+
+  /voice/delete:
+    delete:
+      summary: Delete a voice sample
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sampleId:
+                  type: string
+              required:
+                - sampleId
+      responses:
+        '200':
+          description: Voice sample deletion confirmation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+
+components:
+  schemas:
+    AnalysisResult:
+      type: object
+      properties:
+        status:
+          type: string
+        analysis:
+          type: object
+          properties:
+            detectedVoice:
+              type: boolean
+            voiceType:
+              type: string
+              enum: [human, AI-generated]
+            confidenceScore:
+              type: number
+            additionalInfo:
+              type: object
+              properties:
+                emotionalTone:
+                  type: string
+                  enum: [neutral, happy, sad, angry]
+                backgroundNoiseLevel:
+                  type: string
+                  enum: [low, medium, high]
+    SampleMetadata:
+      type: object
+      properties:
+        sampleId:
+          type: string
+        uploadDate:
+          type: string
+        metadata:
+          type: object
+          properties:
+            userId:
+              type: string
+            sampleType:
+              type: string
+              enum: [original, synthetic]
+            environment:
+              type: string
+              enum: [quiet, noisy, outdoor]
+
+
+
+1. Upload Voice SampleEndpoint: /api/voice/uploadMethod: POSTRequest Body:{
+  "sample": "encoded audio file content",
+  "metadata": {
+    "userId": "unique user identifier",
+    "sampleType": "original | synthetic",
+    "environment": "quiet | noisy | outdoor",
+    "description": "optional description of the voice sample"
+  }
+}Response:{
+  "status": "success",
+  "message": "Voice sample uploaded successfully",
+  "sampleId": "unique sample identifier"
+}2. Analyze Voice SampleEndpoint: /api/voice/analyzeMethod: POSTRequest Body:{
+  "sampleId": "unique sample identifier"
+}Response:{
+  "status": "success",
+  "analysis": {
+    "detectedVoice": true,
+    "voiceType": "human | AI-generated",
+    "confidenceScore": 98.5,
+    "additionalInfo": {
+      "emotionalTone": "neutral | happy | sad | angry",
+      "backgroundNoiseLevel": "low | medium | high"
+    }
+  }
+}3. Retrieve Voice Sample AnalysisEndpoint: /api/voice/retrieveMethod: GETRequest Parameters:sampleId: unique sample identifierResponse:{
+  "status": "success",
+  "sampleId": "unique sample identifier",
+  "analysis": {
+    "detectedVoice": true,
+    "voiceType": "human | AI-generated",
+    "confidenceScore": 95.2,
+    "additionalInfo": {
+      "emotionalTone": "neutral",
+      "backgroundNoiseLevel": "medium"
+    }
+  }
+}4. List Uploaded Voice SamplesEndpoint: /api/voice/samplesMethod: GETResponse:{
+  "status": "success",
+  "samples": [
+    {
+      "sampleId": "unique identifier 1",
+      "uploadDate": "2024-02-08",
+      "metadata": {
+        "userId": "user1",
+        "sampleType": "original",
+        "environment": "quiet"
+      }
+    },
+    {
+      "sampleId": "unique identifier 2",
+      "uploadDate": "2024-02-09",
+      "metadata": {
+        "userId": "user2",
+        "sampleType": "synthetic",
+        "environment": "noisy"
+      }
+    }
+  ]
+}5. Delete Voice SampleEndpoint: /api/voice/deleteMethod: DELETERequest Body:{
+  "sampleId": "unique sample identifier"
+}Response:{
+  "status": "success",
+  "message": "Voice sample deleted successfully"
+}
