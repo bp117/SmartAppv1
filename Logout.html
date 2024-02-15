@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logged Out</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .logout-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .logo img {
+            max-width: 100px;
+            margin-bottom: 20px;
+        }
+        .logout-message h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .logout-message p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .signin-button {
+            display: inline-block;
+            text-decoration: none;
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .signin-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="logout-container">
+    <div class="logo">
+        <!-- Replace the src attribute with the path to your logo image -->
+        <img src="logo.png" alt="Logo">
+    </div>
+    <div class="logout-message">
+        <h2>You are now logged out</h2>
+        <p>Sign in again to continue accessing your account.</p>
+    </div>
+    <!-- Update the href attribute with the path to your login page -->
+    <button onclick="window.location.href='signin-page.html'" class="signin-button">Sign In Again</button>
+</div>
+
+</body>
+</html>
