@@ -1,0 +1,193 @@
+openapi: 3.0.0
+info:
+  title: Real-Time AI Voice Detection API
+  description: API for uploading, analyzing, and managing voice samples for a real-time AI voice detection system. This version includes the model processing time for analytical operations.
+  version: "1.0.2"
+servers:
+  - url: http://localhost:8080/api
+paths:
+  /voice/upload:
+    post:
+      summary: Upload a voice sample
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadRequest'
+      responses:
+        '200':
+          description: Voice sample uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+  /voice/analyze:
+    post:
+      summary: Analyze a voice sample
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sampleId:
+                  type: string
+              required:
+                - sampleId
+      responses:
+        '200':
+          description: Analysis result with model processing time
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  analysis:
+                    $ref: '#/components/schemas/AnalysisResult'
+                  modelProcessingTime:
+                    type: number
+                    description: Time taken by the model to analyze the voice sample, in milliseconds.
+  /voice/retrieve:
+    get:
+      summary: Retrieve voice sample analysis
+      parameters:
+        - in: query
+          name: sampleId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Analysis result for the requested sample
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisResponse'
+  /voice/samples:
+    get:
+      summary: List all uploaded voice samples
+      responses:
+        '200':
+          description: List of voice samples
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  samples:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SampleMetadata'
+  /voice/delete:
+    delete:
+      summary: Delete a voice sample
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sampleId:
+                  type: string
+              required:
+                - sampleId
+      responses:
+        '200':
+          description: Voice sample deletion confirmation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+components:
+  schemas:
+    UploadRequest:
+      type: object
+      properties:
+        sample:
+          type: string
+          description: Base64 encoded audio file content
+        metadata:
+          type: object
+          properties:
+            userId:
+              type: string
+            sampleType:
+              type: string
+              enum: [original, synthetic]
+            environment:
+              type: string
+              enum: [quiet, noisy, outdoor]
+            description:
+              type: string
+              nullable: true
+      required:
+        - sample
+        - metadata
+    UploadResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        sampleId:
+          type: string
+    AnalysisResult:
+      type: object
+      properties:
+        detectedVoice:
+          type: boolean
+        voiceType:
+          type: string
+          enum: [human, AI-generated]
+        confidenceScore:
+          type: number
+        additionalInfo:
+          type: object
+          properties:
+            emotionalTone:
+              type: string
+              enum: [neutral, happy, sad, angry]
+            backgroundNoiseLevel:
+              type: string
+              enum: [low, medium, high]
+    AnalysisResponse:
+      allOf:
+        - $ref: '#/components/schemas/AnalysisResult'
+        - type: object
+          properties:
+            sampleId:
+              type: string
+            modelProcessingTime:
+              type: number
+              description: Time taken by the model to analyze the voice sample, in milliseconds.
+    SampleMetadata:
+      type: object
+      properties:
+        sampleId:
+          type: string
+        uploadDate:
+          type: string
+        metadata:
+          type: object
+          properties:
+            userId:
+              type: string
+            sampleType:
+              type: string
+            environment:
+              type: string
+    DeleteResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
