@@ -1,0 +1,96 @@
+. Upload Voice Sample
+Endpoint: /voice/upload
+Positive Test Case: Upload a Voice Sample
+
+Request:
+json
+Copy code
+{
+  "sample": "base64-encoded-audio-content",
+  "metadata": {
+    "userId": "user123",
+    "environment": "quiet",
+    "description": "Testing voice sample upload"
+  }
+}
+Expected Response:
+json
+Copy code
+{
+  "status": "success",
+  "message": "Voice sample uploaded successfully",
+  "sampleId": "sample123"
+}
+2. Analyze Voice Sample
+Endpoint: /voice/analyze
+The analysis now needs to autonomously detect the nature of the voice sample. The test cases will focus on the system's accuracy in distinguishing between human and synthetic voices.
+
+Positive Test Case: Analyzing Human Voice Sample
+
+Request:
+json
+Copy code
+{
+  "sampleId": "sample123"
+}
+Expected Response:
+json
+Copy code
+{
+  "status": "success",
+  "analysis": {
+    "detectedVoice": true,
+    "voiceType": "human",
+    "confidenceScore": 95.0,
+    "additionalInfo": {
+      "emotionalTone": "neutral",
+      "backgroundNoiseLevel": "low"
+    }
+  },
+  "modelProcessingTime": 200
+}
+Positive Test Case: Analyzing Synthetic Voice Sample
+
+Request:
+json
+Copy code
+{
+  "sampleId": "sample456"
+}
+Expected Response:
+json
+Copy code
+{
+  "status": "success",
+  "analysis": {
+    "detectedVoice": true,
+    "voiceType": "AI-generated",
+    "confidenceScore": 92.5,
+    "additionalInfo": {
+      "emotionalTone": "neutral",
+      "backgroundNoiseLevel": "medium"
+    }
+  },
+  "modelProcessingTime": 250
+}
+Negative Test Cases
+Invalid Sample ID
+
+Request:
+json
+Copy code
+{
+  "sampleId": "nonExistentSampleId"
+}
+Expected Response:
+json
+Copy code
+{
+  "status": "error",
+  "message": "Sample ID not found"
+}
+Request without Sample ID
+
+This scenario tests the API's error handling when the request lacks a required field, such as sampleId.
+
+Expected to return a 400 Bad Request status with an appropriate error message indicating that the sampleId is missing from the request.
