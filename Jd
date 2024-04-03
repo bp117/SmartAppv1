@@ -1,4 +1,4 @@
-### UI/UX Designer
+ji### UI/UX Designer
 
 **Job Overview:**
 We are seeking a UI/UX Designer with a strong emphasis on UI development to join our team. The ideal candidate will excel in creating intuitive, engaging user interfaces for web and mobile applications, utilizing their technical skills primarily in UI development while also understanding UX principles.
@@ -26,3 +26,35 @@ Proficiency in Python, with experience in developing APIs using FastAPI and Flas
 - Optimize applications for maximum speed and scalability while ensuring user-centric design principles are applied.
 - Stay ahead of the curve with the latest UI trends, techniques, and technologies, and advocate for their adoption where appropriate.
 - Engage with cross-functional teams to align on design goals and deliver cohesive user experiences across the product ecosystem.
+
+
+
+### Full Stack Developer
+
+**Job Overview:**
+We are seeking a Full Stack Developer with expertise in front-end and back-end development. The ideal candidate will have experience in creating dynamic, responsive web applications using React, TypeScript, and Python, with FastAPI for API development, and a strong understanding of MongoDB.
+
+**Essential Technical Skills:**
+- Proficiency in ReactJS for front-end development, creating dynamic and responsive user interfaces.
+- Strong understanding of TypeScript for writing type-safe and maintainable code.
+- Experience with Jest for comprehensive front-end unit testing.
+- Solid knowledge of Python for back-end development, crafting efficient server-side code.
+- Experience in developing and consuming APIs using FastAPI, focusing on high performance and scalability.
+- In-depth knowledge of MongoDB for database management, including data modeling, indexing, and performance optimization.
+- Familiarity with version control systems, preferably Git, for code management and collaboration.
+
+**Good to Have Skills:**
+- Experience with additional front-end frameworks like Angular or Vue.js.
+- Knowledge of containerization and orchestration technologies (e.g., Docker, Kubernetes).
+- Understanding of cloud services (e.g., AWS, Azure, GCP) and how to deploy applications on these platforms.
+- Ability to implement continuous integration and continuous deployment (CI/CD) pipelines.
+- Familiarity with web security practices and ensuring the security of the application at all levels.
+- Experience in designing and maintaining scalable and high-availability systems.
+
+**Job Expectations:**
+- Develop and maintain scalable and robust full-stack applications using React, TypeScript, Python, FastAPI, and MongoDB.
+- Collaborate with cross-functional teams to define, design, and ship new features and functionality.
+- Ensure the performance, quality, and responsiveness of applications.
+- Identify and correct bottlenecks and fix bugs, ensuring code quality, organization, and automation.
+- Stay up-to-date with the latest industry trends and technologies, continuously improving the technical framework and architecture.
+- Contribute to the entire application lifecycle, focusing on coding, debugging, and providing user-friendly environment and interfaces.
