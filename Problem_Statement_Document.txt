@@ -1,0 +1,53 @@
+
+Problem Statement Document
+
+Introduction
+In our organization, employees submit their broadband bills for reimbursement. These bills, which are computer-generated and come in PDF or image formats from various providers, need to be verified for authenticity. There has been a growing concern about the submission of tampered or altered bills. To address this, we aim to develop a system that can automatically detect alterations in these documents to streamline the reimbursement process and ensure compliance.
+
+Problem Statement
+The main challenge is to accurately identify and filter out tampered broadband bills submitted in either PDF or image format. These tampered documents may have alterations such as modified dates, amounts, or service details which could potentially lead to fraudulent reimbursements. The solution must handle bills from multiple providers, each with different formats and designs.
+
+Proposed Solution
+The proposed solution involves using Artificial Intelligence and Machine Learning (AI/ML) technologies to analyze and verify the authenticity of the bills. The system will:
+- Automatically extract text and metadata from PDFs and images.
+- Use anomaly detection to identify inconsistencies in bill formats and contents.
+- Implement image processing techniques to detect alterations in document images.
+- Integrate a reporting feature to flag suspicious bills and provide evidence of tampering.
+
+Solution Details
+1. Data Extraction: Utilize OCR (Optical Character Recognition) to convert bill images and PDFs into machine-readable text.
+2. Anomaly Detection: Develop a model that learns the typical patterns and formats of genuine bills and flags deviations.
+3. Image Analysis: Apply image processing algorithms to detect any signs of physical alterations or inconsistencies in the bill images.
+4. User Interface: Create a simple web-based interface where staff can upload bills and view the verification results.
+
+Good to Have
+- A dashboard for real-time monitoring of the bill verification process.
+- Mobile app integration for convenient bill uploads and checks.
+- Advanced reporting tools for audit and compliance purposes.
+
+Technologies
+- Python for backend development
+- TensorFlow or PyTorch for machine learning models
+- Tesseract OCR for text extraction
+- ReactJS for front-end development
+- Docker for containerization and deployment
+
+Estimated Efforts in Hours
+- Setup: 20 hours
+- Design/Analysis: 40 hours
+- Development: 160 hours
+- Testing: 80 hours
+- Demo Preparation: 20 hours
+
+Demo
+The final week will include a demo session where the interns will showcase the system, demonstrating the input, process, and output. This session will also gather feedback for any necessary refinements.
+
+Takeaway for Interns
+Interns will gain hands-on experience in:
+- Applying AI/ML techniques in real-world applications.
+- Developing end-to-end solutions with modern software technologies.
+- Working in a team environment on a project from conception to deployment.
+- Enhancing skills in problem-solving, coding, and system design.
+
+Conclusion
+This project not only aims to solve an important organizational problem but also provides a rich learning platform for interns. By using cutting-edge technologies and implementing a full software development lifecycle, interns will be prepared to tackle similar challenges in the future.
