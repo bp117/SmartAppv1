@@ -1,0 +1,50 @@
+
+Problem Statement Document for 5 Whys Analysis Dashboard
+
+Introduction
+Organizations often face challenges in efficiently managing incident resolution and deriving actionable insights from incident data. The "5 Whys" method is a proven technique to explore the cause-and-effect relationships underlying a particular problem. However, tracking these analyses and associated learnings across multiple platforms like ServiceNow or SharePoint can be cumbersome and disjointed. To address this, there is a need for a centralized dashboard that not only displays incidents and the...
+
+Problem Statement
+The primary challenge is to develop a dashboard that retrieves incident data from ServiceNow or SharePoint, displays a comprehensive overview of incidents by severity, application, and number, and allows detailed exploration of each incident through a "5 Whys" analysis. Additionally, the system should enable app owners to enter and save lessons learned for each incident, fostering a culture of continuous improvement and knowledge sharing.
+
+Proposed Solution
+The proposed solution is to create a "5 Whys Analysis Dashboard" that:
+- Integrates with ServiceNow or SharePoint to fetch incident data.
+- Displays a grid of incidents with details such as severity, associated application, and incident number.
+- Allows users to click on an incident to view and enter the "5 Whys" analysis.
+- Provides a field for app owners to document lessons learned, which can be saved directly within the dashboard.
+- Includes a reports page featuring drill-down charts for visualizing incident data per application, aiding in trend analysis and decision-making.
+
+Solution Details
+1. Data Integration: Utilize APIs to integrate with ServiceNow or SharePoint for real-time data retrieval.
+2. User Interface: Develop a user-friendly web interface that displays a grid of incident details and allows interaction for deeper analysis.
+3. 5 Whys Functionality: Implement functionality to add and display the "5 Whys" analysis for each incident.
+4. Lessons Learned: Provide editable fields for documenting lessons learned, with save functionality to store this data in the connected system.
+5. Analytics and Reporting: Create a visualization page that offers insights into incident trends and distributions across different applications using interactive, drill-down charts.
+
+Technologies
+- Frontend: ReactJS or Angular for dynamic web development.
+- Backend: Node.js or Python Flask for server-side logic.
+- Database: MongoDB or SQL for data storage.
+- API Integration: RESTful services for interfacing with ServiceNow and SharePoint.
+- Reporting Tools: D3.js or Chart.js for creating interactive data visualizations.
+
+Estimated Efforts in Hours
+- Setup: 20 hours
+- Design/Analysis: 30 hours
+- Development: 100 hours
+- Testing: 50 hours
+- Demo Preparation: 10 hours
+
+Demo
+The final week will include a comprehensive demo to stakeholders, showcasing the dashboard functionality, the integration points, and the user interaction flows. This demo will also highlight how the dashboard simplifies the process of "5 Whys" analysis and learning documentation.
+
+Takeaway for Interns
+Interns will gain hands-on experience in:
+- Developing a full-stack application with modern web technologies.
+- Integrating with enterprise systems like ServiceNow and SharePoint.
+- Implementing complex user interfaces and data visualization techniques.
+- Working within a real-world scenario that enhances their problem-solving and software development skills.
+
+Conclusion
+This project is designed not only to fulfill an organizational need for better incident analysis and learning documentation but also to provide interns with a challenging and rewarding experience in software development and enterprise system integration.
