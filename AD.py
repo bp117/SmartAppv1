@@ -14,50 +14,44 @@ def extract_text_features(page):
     image_pil = Image.frombytes("RGB", [pixmap.width, pixmap.height], pixmap.samples)
     data = pytesseract.image_to_data(image_pil, output_type=pytesseract.Output.DICT)
     features = []
+    text_blocks = []
     for i, word in enumerate(data['text']):
-        if word.strip():
-            features.append([
+        if word.strip():  # Include only non-empty words
+            feature = [
                 int(data['left'][i]),
                 int(data['top'][i]),
                 int(data['width'][i]),
                 int(data['height'][i]),
                 len(word),
                 int(data['conf'][i])  # OCR confidence as a feature
-            ])
-    return np.array(features) if features else np.empty((0, 6))
+            ]
+            features.append(feature)
+            text_blocks.append(word)  # Keep track of the text corresponding to each feature
+    return np.array(features), text_blocks
 
-# Evaluate model performance
-def evaluate_model(features):
-    # Normalize features
+# Evaluate model performance and detect anomalies
+def detect_anomalies(features, text_blocks):
+    if features.size == 0:
+        return []
     scaler = StandardScaler()
     features_scaled = scaler.fit_transform(features)
 
-    # Define potential parameter ranges
-    n_estimators = [50, 100, 150]
-    contamination_levels = np.linspace(0.01, 0.1, 5)  # Dynamic range of contamination
-    best_score = np.inf
-    best_params = {}
-    
-    for n in n_estimators:
-        for contamination in contamination_levels:
-            model = Isolation Forest(n_estimators=n, contamination=contamination, random_state=42)
-            model.fit(features_scaled)
-            # Calculate anomaly scores
-            scores = model.score_samples(features_scaled)
-            average_score = np.mean(scores)
-            if average_score < best_score:  # Looking for the lowest score as indication of anomalies
-                best_score = average_score
-                best_params = {'n_estimators': n, 'contamination': contamination}
-    
-    return best_params, best_score
+    model = Isolation Forest(n_estimators=100, contamination=0.05, random_state=42)
+    model.fit(features_scaled)
+    predictions = model.predict(features_scaled)
+
+    # Collect anomalous text blocks
+    anomalies = []
+    for idx, pred in enumerate(predictions):
+        if pred == -1:
+            anomalies.append(text_blocks[idx])
+    return anomalies
 
 # Process each page
 for page_number, page in enumerate(pdf_document):
-    features = extract_text_features(page)
-    if features.size > 0:
-        best_params, best_score = evaluate_model(features)
-        print(f"Best params for page {page_number + 1}: {best_params} with anomaly score {best_score}")
-        if best_score < -0.5:  # Example threshold, adjust based on your data
-            print(f"Potential tampering detected on page {page_number + 1}")
+    features, text_blocks = extract_text_features(page)
+    anomalies = detect_anomalies(features, text_blocks)
+    if anomalies:
+        print(f"Potential tampering detected on page {page_number + 1} in the following text blocks: {anomalies}")
     else:
-        print(f"No features to analyze on page {page_number + 1}")
+        print(f"No tampering detected on page {page_number + 1}")
