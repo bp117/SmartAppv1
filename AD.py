@@ -4,63 +4,66 @@ import pytesseract
 from sklearn.ensemble import Isolation Forest
 from sklearn.preprocessing import StandardScaler
 import numpy as np
+import re
 
 # Load the PDF
-pdf_path = "/mnt/data/INV-AP-B1-65583719-109634302829-JULY-2022.pdf"
+pdf_path = "/mnt/data/your_document.pdf"
 pdf_document = fitz.open(pdf_path)
 
-# Extract text and metadata using OCR
-def extract_text_features(page):
-    pixmap = page.get_pixmap()
-    image_pil = Image.frombytes("RGB", [pixmap.width, pixmap.height], pixmap.samples)
-    data = pytesseract.image_to_data(image_pil, output_type=pytesseract.Output.DICT)
+# Define regions of interest (ROI) based on your document layout
+# Example ROI for amounts, customer names, and addresses (x0, y0, x1, y1)
+roi_boxes = {
+    'amounts': fitz.Rect(100, 500, 300, 550),
+    'names': fitz.Rect(100, 200, 300, 250),
+    'addresses': fitz.Rect(100, 300, 300, 350)
+}
+
+# Extract text within specified regions of interest
+def extract_roi_features(page):
     features = []
     text_blocks = []
-    block_coords = []
-    for i, word in enumerate(data['text']):
-        if word.strip():  # Include only non-empty words
-            feature = [
-                int(data['left'][i]),
-                int(data['top'][i]),
-                int(data['width'][i]),
-                int(data['height'][i]),
-                len(word),
-                int(data['conf'][i])  # OCR confidence as a feature
-            ]
-            features.append(feature)
-            text_blocks.append(word)  # Keep track of the text corresponding to each feature
-            block_coords.append((data['left'][i], data['top'][i], data['left'][i] + data['width'][i], data['top'][i] + data['height'][i]))
-    return np.array(features), text_blocks, block_coords
+    for key, roi in roi_boxes.items():
+        words = page.get_text("words")  # Gets text as list of words along with their bounding boxes
+        for word in words:
+            word_rect = fitz.Rect(word[:4])
+            if word_rect.intersects(roi):
+                feature = [
+                    word[0],  # x0
+                    word[1],  # y0
+                    word[2] - word[0],  # width
+                    word[3] - word[1],  # height
+                    len(word[4]),  # text length
+                    word[4]  # the text itself for further analysis
+                ]
+                features.append(feature)
+                text_blocks.append({'text': word[4], 'type': key, 'coords': word[:4]})
+    return np.array(features), text_blocks
 
-# Evaluate model performance and detect anomalies
-def detect_anomalies(features, block_coords):
-    if features.size == 0:
+# Detect anomalies using Isolation Forest
+def detect_anomalies(features, text_blocks):
+    if len(features) == 0:
         return []
     scaler = StandardScaler()
-    features_scaled = scaler.fit_transform(features)
-
+    features_scaled = scaler.fit_transform(features[:,:-1])  # Exclude text for scaling
     model = Isolation Forest(n_estimators=100, contamination=0.05, random_state=42)
     model.fit(features_scaled)
     predictions = model.predict(features_scaled)
-
-    # Collect coordinates of anomalous text blocks
     anomalies = []
     for idx, pred in enumerate(predictions):
         if pred == -1:
-            anomalies.append(block_coords[idx])
+            anomalies.append(text_blocks[idx])
     return anomalies
 
-# Process each page and annotate anomalies
+# Process each page
 for page_number, page in enumerate(pdf_document):
-    features, text_blocks, block_coords = extract_text_features(page)
-    anomalies = detect_anomalies(features, block_coords)
+    features, text_blocks = extract_roi_features(page)
+    anomalies = detect_anomalies(features, text_blocks)
     if anomalies:
-        for rect in anomalies:
-            # Draw a red rectangle around each anomalous block
-            page.draw_rect(fitz.Rect(rect), color=(1, 0, 0), width=1.5)
-        print(f"Tampering detected and marked on page {page_number + 1}.")
+        print(f"Potential tampering detected on page {page_number + 1} in the following blocks:")
+        for anomaly in anomalies:
+            print(f" - {anomaly['type']} at {anomaly['coords']}: {anomaly['text']}")
     else:
-        print(f"No tampering detected on page {page_number + 1}.")
+        print(f"No tampering detected on page {page_number + 1}")
 
 # Save the annotated PDF
 output_pdf_path = pdf_path.replace('.pdf', '_annotated.pdf')
