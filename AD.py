@@ -80,6 +80,61 @@ for page_number, page in enumerate(pdf_document):
     anomalies = detect_anomalies(features)
     if anomalies.size > 0:
         print(f"Potential tampering detected on page {page_number + 1} at positions {anomalies[:, :-1]}")  # Exclude distance feature from output
+import numpy as np
+import fitz  # PyMuPDF
+from PIL import Image
+import pytesseract
+from sklearn.ensemble import Isolation Forest
+
+# Load the PDF
+pdf_document = fitz.open("/mnt/data/INV-AP-B1-65583719-109634302829-JULY-2022.pdf")
+
+# Extract text and metadata using OCR
+def extract_text_features(page):
+    pixmap = page.get_pixmap()
+    image_pil = Image.frombytes("RGB", [pixmap.width, pixmap.height], pixmap.samples)
+    data = pytesseract.image_to_data(image_pil, output_type=pytesseract.Output.DICT)
+    features = []
+    for i, word in enumerate(data['text']):
+        if word.strip():
+            features.append([
+                int(data['left'][i]),
+                int(data['top'][i]),
+                int(data['width'][i]),
+                int(data['height'][i]),
+                len(word)
+            ])
+    return np.array(features) if features else np.empty((0, 5))
+
+# Evaluate model performance based on silhouette score or other custom criteria
+def evaluate_model(features):
+    # Define potential parameter ranges
+    n_estimators = [50, 100, 150]
+    contamination_levels = [0.01, 0.05, 0.1]
+    best_score = -np.inf
+    best_params = {}
+    
+    for n in n_estimators:
+        for contamination in contamination_levels:
+            model = Isolation Forest(n_estimators=n, contamination=contamination, random_state=42)
+            model.fit(features)
+            # Calculate anomaly scores (negative scores are more anomalous)
+            scores = model.decision_function(features)
+            average_score = np.mean(scores)
+            if average_score > best_score:
+                best_score = average_score
+                best_params = {'n_estimators': n, 'contamination': contamination}
+    
+    return best_params, best_score
+
+# Process each page
+for page_number, page in enumerate(pdf_document):
+    features = extract_text_features(page)
+    if features.size > 0:
+        best_params, best_score = evaluate_model(features)
+        print(f"Best params for page {page_number + 1}: {best_params} with score {best_score}")
+    else:
+        print(f"No features to analyze on page {page_number + 1}")
+    
     else:
         print(f"No tampering detected on page {page_number + 1}")
-
