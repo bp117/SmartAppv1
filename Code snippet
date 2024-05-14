@@ -1,0 +1,18 @@
+def check_invoice_context(spans):
+    account_no_count = 0
+    tax_invoice_index = -1
+
+    # Iterate through the spans to count "Account No" occurrences and find first "TAX INVOICE" or "INVOICE"
+    for i, span in enumerate(spans):
+        if "Account No" in span[1]:
+            account_no_count += 1
+        if ("TAX INVOICE" in span[1] or "INVOICE" in span[1]) and tax_invoice_index == -1:
+            tax_invoice_index = i
+
+    # Check conditions: Tax invoice must exist and there must be at least two "Account No" before it
+    if tax_invoice_index != -1 and account_no_count >= 2:
+        # Check if all "Account No" entries appear before the first "TAX INVOICE" or "INVOICE"
+        count_before_tax_invoice = sum(1 for j, span in enumerate(spans[:tax_invoice_index]) if "Account No" in span[1])
+        return count_before_tax_invoice >= 2
+
+    return False
