@@ -1,0 +1,72 @@
+Certainly! Here is a draft email proposing the two approaches for creating API keys using JWT vs UUID and explaining each approach:
+
+---
+
+**Subject: Proposal for API Key Creation Using JWT vs UUID**
+
+**Dear [Recipient’s Name],**
+
+I hope this email finds you well.
+
+I am writing to propose two approaches for creating API keys for use case onboarding in our system. These approaches are designed to ensure secure and efficient mapping of API keys to use cases. Below, I outline each approach, detailing the key aspects and implications.
+
+**Approach 1: Using JWT (JSON Web Token)**
+1. **API Key as JWT**: When onboarding a use case, we generate a JWT as the API key.
+2. **Header Inclusion**: The JWT is included as part of the request header.
+3. **Validation**: Upon receiving a request, we validate the JWT based on the client ID and use case ID claims present in the token.
+4. **Database Mapping**: The JWT payload includes a structure such as:
+   ```json
+   {
+     "sub": "client_id",
+     "use_case": "use_case_id"
+   }
+   ```
+   This information is stored in the database, mapping each JWT to a specific client and use case.
+
+   **Advantages**:
+   - **Self-contained**: JWTs carry all necessary information within the token, reducing the need for additional database lookups.
+   - **Security**: Supports expiration and can be signed to ensure integrity and authenticity.
+
+   **Disadvantages**:
+   - **Complexity**: Requires handling token generation, signing, and verification.
+   - **Size**: JWTs can be larger in size compared to simple UUIDs.
+
+**Approach 2: Using UUID (Universally Unique Identifier)**
+1. **API Key as UUID**: When onboarding a use case, we generate a UUID as the API key.
+2. **Header Inclusion**: The UUID is included as part of the request header.
+3. **Validation**: Upon receiving a request, we validate the UUID by checking it against the stored mappings in the database.
+4. **Database Mapping**: We store a mapping of UUIDs to client and use case IDs:
+   ```json
+   {
+     "uuid": "use_case_id"
+   }
+   ```
+
+   **Advantages**:
+   - **Simplicity**: Easy to generate and manage without the need for additional libraries.
+   - **Static**: UUIDs are static and do not expire, simplifying management.
+
+   **Disadvantages**:
+   - **No Expiration**: UUIDs do not have built-in expiration, potentially posing a security risk if compromised.
+   - **Database Dependence**: Requires additional database lookups to validate UUIDs.
+
+**Distribution of Tokens**:
+In both approaches, tokens (JWT or UUID) generated during use case onboarding need to be securely distributed to the clients. This can be achieved through:
+- **Secure Transmission**: Using HTTPS to transmit the token securely.
+- **Client Notification**: Informing the client through a secure channel (e.g., email or secure API endpoint) about the new token.
+- **Storage and Management**: Clients should securely store these tokens and include them in the request headers for future API calls.
+
+**Conclusion**:
+Both approaches have their unique benefits and trade-offs. The choice between JWT and UUID should be made based on our specific requirements for security, simplicity, and scalability.
+
+I look forward to discussing these approaches further and determining the best fit for our system.
+
+Best regards,
+
+[Your Name]  
+[Your Position]  
+[Your Contact Information]
+
+---
+
+Feel free to modify the email to better suit your needs and context.
