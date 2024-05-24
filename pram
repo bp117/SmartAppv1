@@ -1,0 +1,14 @@
+{
+  "standard_parameters": {
+    "max_output_tokens": {
+      "llama": "max_output_tokens",
+      "gemini": "max_tokens",
+      "gpt": "max_output_length"
+    },
+    "temperature": {
+      "llama": "temperature",
+      "gemini": "temp",
+      "gpt": "temperature"
+    }
+  }
+}
