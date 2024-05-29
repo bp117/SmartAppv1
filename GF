@@ -1,0 +1,16 @@
+Certainly! Here are the answers to the questions related to the community service program with Mantra:
+
+1. **In 2-3 min each, could you please tell us what you do at Wells Fargo and a quick summary of the Global Fellows project you worked on? Client? Country? Project at hand?**
+   - At Wells Fargo, I am part of the [your role/department], where I focus on [your main responsibilities]. In the Global Fellows program, we collaborated with Mantra, an NGO based in [country]. Our project involved creating an employee handbook website integrated with a chatbot to assist their staff and volunteers. Our team consisted of members with diverse skill sets from within the organization, enabling us to address various aspects of the project efficiently.
+
+2. **What challenges did you face during Global Fellows?**
+   - One of the primary challenges was coordinating across different time zones and ensuring smooth communication within our diverse team. Additionally, understanding the specific needs of the NGO and tailoring our technical solutions to fit their non-profit context required a significant amount of adaptability and creativity. Another challenge was integrating the chatbot seamlessly with the website while ensuring it provided accurate and helpful responses to users.
+
+3. **How were you impacted positively by the program? What was it for you? Cross cultural exposure Strengthened skills? Leadership development**
+   - The program had a profound impact on me, both professionally and personally. The cross-cultural exposure broadened my understanding of global perspectives and enhanced my ability to work in a multicultural environment. It also strengthened my technical skills, particularly in web development and chatbot integration. Leadership development was another key aspect, as I learned to lead a diverse team, manage project timelines, and ensure successful collaboration among all members.
+
+4. **One piece of advice you would like to share with employees interested in the Global Fellows program?**
+   - Embrace the opportunity to step out of your comfort zone and engage with different cultures and perspectives. Be open to learning from your peers and the community you are serving. Effective communication and adaptability are crucial. Remember, the impact of your work goes beyond the immediate project; it fosters growth and creates lasting positive change for the community and yourself.
+
+
+Managing a team with a mix of technical and non-technical skills was like navigating a diverse crew on a boat through uncharted waters. The technical experts were like the navigators and engineers, skilled at reading maps and maintaining the engine to ensure smooth sailing. The non-technical members were like the lookouts and deckhands, vigilant and resourceful, spotting opportunities and handling unexpected challenges. By recognizing each crew member’s unique skills and assigning them to roles where they could excel, we worked together efficiently, steering the boat towards our destination with precision and teamwork, ensuring a successful and rewarding journey.
