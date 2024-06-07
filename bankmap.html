@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Wells Fargo Branch Recommendations</title>
+  <style>
+    #map {
+      height: 100%;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9GXW1Ia6ImMDWLxm5eEXvbA9IuJKK1WY&&libraries=places&callback=initMap" async defer></script>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    let map;
+    const charlotteLocation = { lat: 35.2271, lng: -80.8431 }; // Charlotte, NC
+    let placesService;
+    let distanceMatrixService;
+    let currentLocationMarker;
+
+    function initMap() {
+      // Create a map centered at Charlotte, NC
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: charlotteLocation,
+        zoom: 12
+      });
+
+      // Add traffic layer
+      const trafficLayer = new google.maps.TrafficLayer();
+      trafficLayer.setMap(map);
+
+      // Initialize Places and Distance Matrix services
+      placesService = new google.maps.places.PlacesService(map);
+      distanceMatrixService = new google.maps.DistanceMatrixService();
+
+      // Indicate the Charlotte location as current location
+      currentLocationMarker = new google.maps.Marker({
+        position: charlotteLocation,
+        map: map,
+        title: 'Charlotte, NC',
+        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+      });
+
+      // Search for Wells Fargo branches near Charlotte, NC
+      searchWellsFargoBranches();
+    }
+
+    function searchWellsFargoBranches() {
+      const request = {
+        location: charlotteLocation,
+        radius: '10000', // 10km radius
+        type: ['bank'],
+        keyword: 'Wells Fargo'
+      };
+
+      placesService.nearbySearch(request, (results, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          calculateDistances(results);
+        }
+      });
+    }
+
+    function calculateDistances(branches) {
+      const destinations = branches.map(branch => branch.geometry.location);
+      distanceMatrixService.getDistanceMatrix({
+        origins: [new google.maps.LatLng(charlotteLocation.lat, charlotteLocation.lng)],
+        destinations: destinations,
+        travelMode: google.maps.TravelMode.DRIVING,
+        unitSystem: google.maps.UnitSystem.METRIC,
+      }, (response, status) => {
+        if (status === google.maps.DistanceMatrixStatus.OK) {
+          const results = response.rows[0].elements;
+          const distances = results.map((result, index) => ({
+            branch: branches[index],
+            duration: result.duration.value, // Duration in seconds
+            distance: result.distance.value // Distance in meters
+          }));
+          distances.sort((a, b) => a.duration - b.duration);
+          const topBranches = distances.slice(0, 3);
+          displayBranches(topBranches);
+        }
+      });
+    }
+
+    function displayBranches(topBranches) {
+      topBranches.forEach(item => {
+        const marker = new google.maps.Marker({
+          position: item.branch.geometry.location,
+          map: map,
+          title: item.branch.name
+        });
+
+        const infowindow = new google.maps.InfoWindow({
+          content: `<div><strong>${item.branch.name}</strong><br>
+                    ${item.branch.vicinity}<br>
+                    Distance: ${(item.distance / 1000).toFixed(2)} km<br>
+                    Travel Time: ${(item.duration / 60).toFixed(2)} mins</div>`
+        });
+
+        marker.addListener('click', () => {
+          infowindow.open(map, marker);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
