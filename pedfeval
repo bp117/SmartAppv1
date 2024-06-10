@@ -5,10 +5,9 @@ from langchain.llms import CTransformers
 from langchain.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 from langchain import PromptTemplate
-from PyPDF2 import PdfReader
+from langchain.document_loaders import PyPDFLoader
 from datetime import datetime
 from typing import Optional
-from io import BytesIO
 import chainlit as cl
 import sys
 
@@ -24,7 +23,7 @@ Response:
 
 review_prompt_template = """You are an AI assistant tasked with reviewing a PDF document based on the following criteria: Relevance, Comprehensive Story, Language, Originality, Problem Definition. Provide a summary and rate each criterion out of 10.
 
-PDF Text: {pdf_text}
+PDF Text: {context}
 
 Review:
 """
@@ -96,21 +95,18 @@ async def factory():
 
     ### Reads and convert pdf data to text 
     file = files[0]
-    # Convert the content of the PDF file to a BytesIO stream
-    text_stream = BytesIO(file.content)
-    # Create a PdfReader object from the stream to extract text 
-    pdf = PdfReader(text_stream)  
-    pdf_text = ""
-    # Iterate through each page in the PDF and extract text
-    for page in pdf.pages:
-        pdf_text += page.extract_text()  # Concatenate the text from each page
+    loader = PyPDFLoader(file.path)
+    pdf_documents = loader.load()
+    pdf_text = " ".join([doc.page_content for doc in pdf_documents])
 
     ### Create embeddings for the uploaded documents and store in vector store
     # Initialize a text splitter for processing long texts
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, 
-                                                   chunk_overlap=0)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     # Create documents by splitting the provided texts
     documents = text_splitter.create_documents([pdf_text])
+    for i, doc in enumerate(documents):
+        doc.metadata["source"] = f"source_{i}"
+
     # Create a Faiss index from the embeddings
     faiss_index = FAISS.from_documents(documents, embeddings)
    
@@ -118,33 +114,31 @@ async def factory():
     faiss_index_path = indexpath + 'temp-index'
     faiss_index.save_local(faiss_index_path)
     # Load Faiss vectorstore with embeddings created and saved earlier
-    db = FAISS.load_local(faiss_index_path, embeddings)
+    db = FAISS.load_local(faiss_index_path, embeddings, allow_dangerous_deserialization=True)
     
-    prompt = PromptTemplate(template=prompt_template,
-                       input_variables=['context', 'question'])
+    prompt = PromptTemplate(template=prompt_template, input_variables=['context', 'question'])
     
     # Create a retrievalQA chain using Llama2
     chain = RetrievalQA.from_chain_type(
         llm=llm,
         chain_type="stuff",  # Replace with the actual chain type
-        retriever=db.as_retriever(search_kwargs={'k': 2}),  # Assuming vectorstore is used as a retriever
+        retriever=db.as_retriever(search_kwargs={'k': 5}),  # Assuming vectorstore is used as a retriever
         return_source_documents=True,
         chain_type_kwargs={'prompt': prompt}
     )
     
-    review_prompt = PromptTemplate(template=review_prompt_template,
-                                   input_variables=['pdf_text'])
+    review_prompt = PromptTemplate(template=review_prompt_template, input_variables=['context'])
 
     # Generate the review for the uploaded PDF
     review_chain = RetrievalQA.from_chain_type(
         llm=llm,
         chain_type="stuff",
-        retriever=db.as_retriever(search_kwargs={'k': 2}),
+        retriever=db.as_retriever(search_kwargs={'k': 5}),
         return_source_documents=False,
-        chain_type_kwargs={'prompt': review_prompt}
+        chain_type_kwargs={'prompt': review_prompt, 'document_variable_name': 'context'}
     )
 
-    review_response = await review_chain.acall({'pdf_text': pdf_text}, callbacks=[cl.AsyncLangchainCallbackHandler()])
+    review_response = await review_chain.acall({'context': pdf_text}, callbacks=[cl.AsyncLangchainCallbackHandler()])
 
     await cl.Message(content=f"""Review for the uploaded document:
 
