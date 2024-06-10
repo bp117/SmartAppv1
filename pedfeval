@@ -135,7 +135,7 @@ async def factory():
         chain_type="stuff",
         retriever=db.as_retriever(search_kwargs={'k': 5}),
         return_source_documents=False,
-        chain_type_kwargs={'prompt': review_prompt, 'document_variable_name': 'context'}
+        chain_type_kwargs={'prompt': review_prompt}
     )
 
     review_response = await review_chain.acall({'context': pdf_text}, callbacks=[cl.AsyncLangchainCallbackHandler()])
@@ -155,7 +155,7 @@ async def factory():
 async def main(message):
     start_time = datetime.now()
     chain = cl.user_session.get("chain")
-    response = await chain.acall(message, callbacks=[cl.AsyncLangchainCallbackHandler()])
+    response = await chain.acall({'context': message, 'question': message}, callbacks=[cl.AsyncLangchainCallbackHandler()])
     
     end_time = datetime.now()
     time_taken = end_time - start_time
