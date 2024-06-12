@@ -1,0 +1,97 @@
+### Manages Other Managers or May Be a High-Level Individual Contributor
+
+As a high-level individual contributor and manager of other managers, my role has encompassed leading significant projects, mentoring teams, driving strategic initiatives, and contributing to the broader industry through patents and external talks. Here are key deliverables and their impacts:
+
+**1. Tachyon GenAI Platform:**
+- **Role Played:** Designed and developed the control plane for Tachyon, known as Higgs.ai, on a tight deadline for a leadership showcase requested by Mr. Chintan Mehta.
+- **Impact:** Enabled the provisioning of all GenAI use cases through canonical endpoints, reducing deployment efforts from years to days. This platform supports both poly cloud inferencing and on-premise inferencing using a variety of large language models like Gemini, GPT, Llama2/3, and Mistral. The implementation of advanced Retrieval-Augmented Generation (RAG) with re-ranking significantly improved performance.
+- **Outcome:** Positioned as a key influencer in AI-driven innovation, enhancing the bank's capabilities in deploying advanced AI solutions.
+
+**2. DTI API Framework:**
+- **Role Played:** Led the design and development of the DTI API framework to support the bank's modernization efforts. Engaged with the CTO team for integration with the Orchestra platform, ensuring a standardized approach to building microservices APIs.
+- **Impact:** Streamlined data management processes, enhanced system interoperability, and facilitated wider adoption across various teams. This framework included the Spectral API linter for maintaining API spec consistency, included in the build pipeline for pre-deployment validation.
+- **Outcome:** Improved efficiency, reduced redundancy, and ensured high-quality API deployments across the organization.
+
+**3. Tempest Platform:**
+- **Role Played:** Developed the design to copy Hogan data to MongoDB, ensuring continuous availability of account information during outages. Introduced components like Flink for stream processing and MQ Kafka replicator to support the platform.
+- **Impact:** Enhanced customer experience by providing reliable access to account information, even during system outages. The solution addressed critical Day 1 problems such as data races during customer login and stale data issues.
+- **Outcome:** Improved data accessibility and operational resilience, ensuring seamless customer interactions.
+
+**4. Constrictr – In-House Chaos Engineering Tool:**
+- **Role Played:** Designed and developed Constrictr to test the resiliency of applications, inspired by the organizational outage in February 2018. Evaluated various external tools like Gremlin, Chaos Monkey, and Toxy Proxy before deciding to build an in-house solution.
+- **Impact:** Ensured application resiliency and operational stability by simulating various failure scenarios. Implemented FMEA as a best practice for risk assessment and mitigation.
+- **Outcome:** Enhanced the bank’s preparedness for potential outages, fostering a culture of resilience and proactive risk management.
+
+**5. 5Why Analysis Dashboard:**
+- **Role Played:** Created a centralized dashboard for visualizing 5Why analysis to explore cause-and-effect relationships underlying problems. Enabled system owners to enter and save lessons learned for each incident.
+- **Impact:** Fostered continuous improvement and knowledge sharing across the organization, leading to better incident management and quicker resolution times.
+- **Outcome:** Improved organizational learning and incident response effectiveness.
+
+**6. Mentoring and Talent Development:**
+- **Role Played:** Mentored new team members and fresh graduates, including those in the Global Fellows Program. Enabled them to upskill in various technologies such as TypeScript, React, Python, and FastAPI, successfully leading project executions.
+- **Impact:** Built a robust pipeline of skilled professionals equipped to handle complex projects and drive innovation. Delivered successful projects, such as the web-based employee handbook for Mantra NGO, by understanding and accommodating client requirements.
+- **Outcome:** Fostered a culture of continuous learning and professional development, contributing to the overall growth and success of the organization.
+
+**7. Research and Development of Large Language Models (LLMs):**
+- **Role Played:** Conducted research and development on various LLMs like Gemini, GPT, Llama2/3, and Mistral. Implemented traditional and advanced Retrieval-Augmented Generation (RAG) with re-ranking, drastically improving model performance.
+- **Impact:** Enhanced the bank’s AI capabilities, providing domain-specific fine-tuning of models to meet specific business needs.
+- **Outcome:** Positioned the bank as a leader in AI innovation, improving the accuracy and efficiency of AI-driven solutions.
+
+**8. External Talks and Industry Contributions:**
+- **Role Played:** Delivered talks on diverse topics such as chaos engineering, Generative AI, and large language models at internal forums like Tech Spotlight, Engineering Summit meetings, and external events like WITfluence and GIDS 2023.
+- **Impact:** Shared insights and best practices, fostering a culture of innovation and knowledge sharing within and outside the organization.
+- **Outcome:** Established a strong presence in the industry, contributing to the bank’s reputation as a thought leader in technology and innovation.
+
+**9. Patents and Innovations:**
+- **Role Played:** Secured patents on innovative solutions, including "User Interface Competence-Based Authentication and Design."
+- **Impact:** Protected intellectual property and showcased the bank's commitment to innovation and cutting-edge technology.
+- **Outcome:** Enhanced the bank's competitive edge and contributed to its strategic goals through innovative solutions.
+
+These deliverables demonstrate my capability to manage other managers and contribute at a high level, driving significant projects to successful completion and ensuring alignment with strategic goals.
+
+
+### Executive-Level Manager Accountable for Setting Vision and Strategic Direction
+
+As an executive-level manager, I have consistently demonstrated my ability to set a strategic vision and direction while maximizing organizational performance. My approach involves aligning our technological advancements with the bank's overarching strategic goals, fostering innovation, and ensuring operational excellence.
+
+**1. Tachyon GenAI Platform:**
+- **Vision and Strategic Direction:** Recognizing the transformative potential of Generative AI, I spearheaded the development of the Tachyon GenAI platform. This initiative aligns with the bank’s strategic goal of leveraging advanced technologies to enhance operational efficiency and customer experience.
+- **Impact:** The platform supports poly cloud and on-premise inferencing using a variety of large language models, including Gemini, GPT, Llama2/3, and Mistral. By implementing advanced Retrieval-Augmented Generation (RAG) with re-ranking, we drastically improved the performance of AI models, reducing deployment efforts from years to days.
+- **Outcome:** Enabled tangible innovation and positioned the bank as a leader in AI-driven solutions, significantly enhancing our capabilities in deploying complex AI models.
+
+**2. DTI API Framework:**
+- **Vision and Strategic Direction:** To support the bank's modernization efforts, I led the creation of the DTI API framework, aiming to standardize the development of microservices APIs.
+- **Impact:** Collaborated with the CTO team for integration with the Orchestra platform, ensuring consistency and quality in API deployments. The incorporation of the Spectral API linter in the build pipeline ensures adherence to OpenAPI standards.
+- **Outcome:** Streamlined data management processes and facilitated broader adoption of modern development practices across various teams.
+
+**3. Tempest Platform:**
+- **Vision and Strategic Direction:** Addressing the need for continuous availability of account information, I designed the Tempest platform to improve customer experience during outages.
+- **Impact:** Implemented a robust architecture using MongoDB for data storage and Flink for stream processing. The use of MQ Kafka replicator ensured real-time data synchronization, providing reliable access to account information even during system outages.
+- **Outcome:** Enhanced operational resilience and improved customer satisfaction by ensuring seamless access to critical account information.
+
+**4. Constrictr – In-House Chaos Engineering Tool:**
+- **Vision and Strategic Direction:** In response to an organizational outage in February 2018, I developed Constrictr to test the resiliency of applications. This tool was designed to be agentless and to integrate seamlessly with the bank's ecosystem.
+- **Impact:** Evaluated various external tools like Gremlin, Chaos Monkey, and Toxy Proxy before building the in-house solution. Constrictr incorporates Failure Mode and Effects Analysis (FMEA) as a best practice for risk assessment and mitigation.
+- **Outcome:** Fostered a culture of resilience and proactive risk management, ensuring the bank's preparedness for potential disruptions.
+
+**5. Mentoring and Talent Development:**
+- **Vision and Strategic Direction:** Emphasizing the importance of talent development, I mentored new team members and fresh graduates, enabling them to upskill in various technologies.
+- **Impact:** Successfully led projects like the Global Fellows Program, where we created a web-based employee handbook for the NGO Mantra. Enabled team members to upskill in TypeScript, React, Python, and FastAPI, ensuring successful project executions.
+- **Outcome:** Built a robust pipeline of skilled professionals equipped to handle complex projects and drive innovation, contributing to the overall growth and success of the organization.
+
+**6. Research and Development of Large Language Models (LLMs):**
+- **Vision and Strategic Direction:** Conducted research and development on various LLMs like Gemini, GPT, Llama2/3, and Mistral. Implemented traditional and advanced Retrieval-Augmented Generation (RAG) with re-ranking.
+- **Impact:** Enhanced the bank’s AI capabilities, providing domain-specific fine-tuning of models to meet specific business needs.
+- **Outcome:** Improved the accuracy and efficiency of AI-driven solutions, positioning the bank as a leader in AI innovation.
+
+**7. External Talks and Industry Contributions:**
+- **Vision and Strategic Direction:** Delivered talks on diverse topics such as chaos engineering, Generative AI, and large language models at internal forums like Tech Spotlight and Engineering Summit meetings, and external events like WITfluence and GIDS 2023.
+- **Impact:** Shared insights and best practices, fostering a culture of innovation and knowledge sharing within and outside the organization.
+- **Outcome:** Established a strong presence in the industry, contributing to the bank’s reputation as a thought leader in technology and innovation.
+
+**8. Patents and Innovations:**
+- **Vision and Strategic Direction:** Secured patents on innovative solutions, including "User Interface Competence-Based Authentication and Design."
+- **Impact:** Protected intellectual property and showcased the bank's commitment to innovation and cutting-edge technology.
+- **Outcome:** Enhanced the bank's competitive edge and contributed to its strategic goals through innovative solutions.
+
+These initiatives demonstrate my ability to set a strategic vision, drive significant projects to successful completion, and align technological advancements with the bank’s overarching goals. By fostering innovation, enhancing operational efficiency, and mentoring talent, I have significantly contributed to maximizing organizational performance and ensuring the bank’s continued success.
