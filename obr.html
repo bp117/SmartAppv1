@@ -19,11 +19,11 @@
       max-height: none !important;
     }
     .gm-ui-hover-effect {
-      height: 24px !important;
-      width: 48px !important;
+      height: 10px !important;
+      width: 10px !important;
     }
   </style>
-  <script src="https://maps.googleapis.com/maps/api/js?key=sd&libraries=places"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places"></script>
 </head>
 <body>
   <div id="map"></div>
@@ -35,7 +35,14 @@
     const markers = [];
     const infoWindows = []; // Array to keep track of all open info windows
 
-    const CUSTOM_MARKER_ICON_URL = 'wf.png'; // Replace with the URL of your custom marker icon
+    const CUSTOM_MARKER_ICON_URL = 'URL_TO_YOUR_CUSTOM_MARKER_ICON'; // Replace with the URL of your custom marker icon
+
+    function initializeServices() {
+      if (map) {
+        placesService = new google.maps.places.PlacesService(map);
+        distanceMatrixService = new google.maps.DistanceMatrixService();
+      }
+    }
 
     function initMap(lat, lng) {
       const userLocation = { lat, lng }; // User's current location
@@ -46,13 +53,12 @@
         zoom: 12
       });
 
+      // Initialize Places and Distance Matrix services
+      initializeServices();
+
       // Add traffic layer
       const trafficLayer = new google.maps.TrafficLayer();
       trafficLayer.setMap(map);
-
-      // Initialize Places and Distance Matrix services
-      placesService = new google.maps.places.PlacesService(map);
-      distanceMatrixService = new google.maps.DistanceMatrixService();
 
       // Indicate the user's current location as current location
       currentLocationMarker = new google.maps.Marker({
@@ -225,9 +231,9 @@
         }
       });
     }
-	initializeMap(35.2271,-80.8431)
-	branches = getTopBranches(35.2271,-80.8431)
-	alert(branches)
+
+    // Initialize the map once the script is loaded
+    window.addEventListener('load', initializeServices);
   </script>
 </body>
 </html>
