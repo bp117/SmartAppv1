@@ -1,3 +1,13 @@
+// Function to get top branches and handle the callback
+    func getTopBranches(lat: Double, lng: Double) {
+        let js = """
+        getTopBranches(\(lat), \(lng), function(topBranches) {
+            window.webkit.messageHandlers.getTopBranchesCallback.postMessage(topBranches);
+        });
+        """
+        webView.evaluateJavaScript(js, completionHandler: nil)
+    }
+
 <!DOCTYPE html>
 <html>
 <head>
