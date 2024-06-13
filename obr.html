@@ -1,13 +1,3 @@
-// Function to get top branches and handle the callback
-    func getTopBranches(lat: Double, lng: Double) {
-        let js = """
-        getTopBranches(\(lat), \(lng), function(topBranches) {
-            window.webkit.messageHandlers.getTopBranchesCallback.postMessage(topBranches);
-        });
-        """
-        webView.evaluateJavaScript(js, completionHandler: nil)
-    }
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -119,13 +109,13 @@
           }));
           distances.sort((a, b) => a.duration - b.duration);
           const topBranches = distances.slice(0, 3);
-          displayBranches(topBranches);
+          displayBranches(topBranches, userLocation);
           setTimeout(setMapZoomAndCenter, 100); // Delay to ensure markers are added before fitting bounds
         }
       });
     }
 
-    function displayBranches(topBranches) {
+    function displayBranches(topBranches, userLocation) {
       topBranches.forEach((item, index) => {
         const marker = new google.maps.Marker({
           position: item.branch.geometry.location,
