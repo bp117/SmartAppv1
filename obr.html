@@ -85,17 +85,17 @@
 
       placesService.nearbySearch(request, (results, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
-          calculateDistances(results, userLocation);
+          calculateDistances(results, userLocation, 'DRIVING'); // Default travel mode is driving
         }
       });
     }
 
-    function calculateDistances(branches, userLocation) {
+    function calculateDistances(branches, userLocation, travelMode) {
       const destinations = branches.map(branch => branch.geometry.location);
       distanceMatrixService.getDistanceMatrix({
         origins: [new google.maps.LatLng(userLocation.lat, userLocation.lng)],
         destinations: destinations,
-        travelMode: google.maps.TravelMode.DRIVING,
+        travelMode: google.maps.TravelMode[travelMode], // Use specified travel mode
         unitSystem: google.maps.UnitSystem.IMPERIAL, // Use Imperial units for miles
       }, (response, status) => {
         if (status === google.maps.DistanceMatrixStatus.OK) {
@@ -189,8 +189,8 @@
       initMap(lat, lng);
     }
 
-    // Function to get the top 3 branches based on latitude and longitude
-    window.getTopBranches = function(lat, lng, callback) {
+    // Function to get the top 3 branches based on latitude and longitude and travel mode
+    window.getTopBranches = function(lat, lng, travelMode) {
       const userLocation = { lat, lng };
       const request = {
         location: userLocation,
@@ -205,7 +205,7 @@
           distanceMatrixService.getDistanceMatrix({
             origins: [new google.maps.LatLng(userLocation.lat, userLocation.lng)],
             destinations: destinations,
-            travelMode: google.maps.TravelMode.DRIVING,
+            travelMode: google.maps.TravelMode[travelMode.toUpperCase()], // Use specified travel mode
             unitSystem: google.maps.UnitSystem.IMPERIAL, // Use Imperial units for miles
           }, (response, status) => {
             if (status === google.maps.DistanceMatrixStatus.OK) {
@@ -225,7 +225,7 @@
                 duration: (branch.duration / 60).toFixed(2),
                 waitTime: branch.waitTime
               }));
-              callback(topBranches);
+              window.webkit.messageHandlers.getTopBranchesCallback.postMessage(topBranches);
             }
           });
         }
