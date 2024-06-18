@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Wells Fargo Branch Recommendations</title>
+  <style>
+    #map {
+      height: 100%;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    .info-window-content {
+      white-space: nowrap;
+    }
+    .gm-style-iw {
+      height: auto !important;
+      max-height: none !important;
+    }
+    .gm-ui-hover-effect {
+      height: 10px !important;
+      width: 10px !important;
+    }
+  </style>
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places"></script>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    let map;
+    let placesService;
+    let distanceMatrixService;
+    let currentLocationMarker;
+    const markers = [];
+    const infoWindows = []; // Array to keep track of all open info windows
+
+    const CUSTOM_MARKER_ICON_URL = 'URL_TO_YOUR_CUSTOM_MARKER_ICON'; // Replace with the URL of your custom marker icon
+    const ATM_MARKER_ICON_URL = 'URL_TO_YOUR_ATM_MARKER_ICON'; // Replace with the URL of your ATM marker icon
+
+    function initializeServices() {
+      if (map) {
+        placesService = new google.maps.places.PlacesService(map);
+        distanceMatrixService = new google.maps.DistanceMatrixService();
+      }
+    }
+
+    function initMap(lat, lng) {
+      const userLocation = { lat, lng }; // User's current location
+
+      // Create a map centered at the user's current location
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: userLocation,
+        zoom: 12
+      });
+
+      // Initialize Places and Distance Matrix services
+      initializeServices();
+
+      // Add traffic layer
+      const trafficLayer = new google.maps.TrafficLayer();
+      trafficLayer.setMap(map);
+
+      // Indicate the user's current location as current location
+      currentLocationMarker = new google.maps.Marker({
+        position: userLocation,
+        map: map,
+        title: 'Your Location',
+        icon: {
+          url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+          scaledSize: new google.maps.Size(40, 40)
+        }
+      });
+
+      // Search for Wells Fargo branches and ATMs near the user's current location
+      searchWellsFargoLocations(userLocation);
+    }
+
+    function searchWellsFargoLocations(userLocation) {
+      const request = {
+        location: userLocation,
+        radius: '10000', // 10km radius
+        type: ['bank', 'atm'],
+        keyword: 'Wells Fargo'
+      };
+
+      placesService.nearbySearch(request, (results, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          // Separate branches and ATMs
+          const branches = results.filter(result => result.types.includes('bank'));
+          const atms = results.filter(result => result.types.includes('atm'));
+
+          calculateDistances(branches, userLocation, 'DRIVING'); // Default travel mode is driving
+          displayLocations(atms, userLocation, ATM_MARKER_ICON_URL); // Display ATMs separately
+        }
+      });
+    }
+
+    function calculateDistances(branches, userLocation, travelMode) {
+      const destinations = branches.map(branch => branch.geometry.location);
+      distanceMatrixService.getDistanceMatrix({
+        origins: [new google.maps.LatLng(userLocation.lat, userLocation.lng)],
+        destinations: destinations,
+        travelMode: google.maps.TravelMode[travelMode.toUpperCase()], // Use specified travel mode
+        unitSystem: google.maps.UnitSystem.IMPERIAL, // Use Imperial units for miles
+      }, (response, status) => {
+        if (status === google.maps.DistanceMatrixStatus.OK) {
+          const results = response.rows[0].elements;
+          const distances = results.map((result, index) => ({
+            branch: branches[index],
+            duration: result.duration.value, // Duration in seconds
+            distance: result.distance.value, // Distance in meters
+            distanceText: result.distance.text, // Distance text
+            waitTime: Math.floor(Math.random() * 30) + 1 // Random wait time between 1 and 30 minutes
+          }));
+          distances.sort((a, b) => a.duration - b.duration);
+          const topBranches = distances.slice(0, 3);
+          displayBranches(topBranches, userLocation);
+          setTimeout(setMapZoomAndCenter, 100); // Delay to ensure markers are added before fitting bounds
+        }
+      });
+    }
+
+    function displayBranches(branches, userLocation) {
+      branches.forEach((item, index) => {
+        const isOpen = item.branch.opening_hours && item.branch.opening_hours.open_now;
+        const markerOpacity = isOpen ? 1.0 : 0.5;
+
+        const marker = new google.maps.Marker({
+          position: item.branch.geometry.location,
+          map: map,
+          title: item.branch.name,
+          icon: {
+            url: CUSTOM_MARKER_ICON_URL, // Use the custom marker icon
+            scaledSize: new google.maps.Size(50, 50), // Increase size
+          },
+          opacity: markerOpacity // Set opacity based on open/closed status
+        });
+
+        markers.push(marker);
+
+        const contentString = `<div id="info-window-content-${index}" class="info-window-content">
+                                ${item.branch.vicinity}<br>
+                                Distance: ${item.distanceText}<br>
+                                Travel Time: ${(item.duration / 60).toFixed(2)} mins<br>
+                                Wait Time: ${item.waitTime} mins
+                              </div>`;
+
+        const infowindow = new google.maps.InfoWindow({
+          content: contentString
+        });
+
+        infoWindows.push(infowindow); // Add the info window to the array
+
+        // Automatically open all info windows
+        infowindow.open(map, marker);
+
+        google.maps.event.addListener(infowindow, 'domready', () => {
+          document.getElementById(`info-window-content-${index}`).addEventListener('click', () => {
+            // Notify the native app about the branch click event
+            if (window.nativeapp && window.nativeapp.bridge && window.nativeapp.bridge.execute) {
+              window.nativeapp.bridge.execute('goNativeScreen', {
+                screenName: 'googlemaps',
+                currentCoordinates: {
+                  lat: userLocation.lat,
+                  lng: userLocation.lng
+                },
+                branchCoordinates: {
+                  lat: item.branch.geometry.location.lat(),
+                  lng: item.branch.geometry.location.lng()
+                },
+                branchDetails: {
+                  vicinity: item.branch.vicinity,
+                  distance: item.distanceText,
+                  duration: (item.duration / 60).toFixed(2),
+                  waitTime: item.waitTime
+                }
+              });
+            }
+          });
+        });
+
+        marker.addListener('click', () => {
+          infowindow.open(map, marker); // Open the info window for the clicked marker
+        });
+      });
+    }
+
+    function displayLocations(locations, userLocation, iconUrl) {
+      locations.forEach((location, index) => {
+        const marker = new google.maps.Marker({
+          position: location.geometry.location,
+          map: map,
+          title: location.name,
+          icon: {
+            url: iconUrl, // Use the appropriate marker icon for ATMs
+            scaledSize: new google.maps.Size(50, 50) // Increase size
+          }
+        });
+
+        markers.push(marker);
+
+        const contentString = `<div id="atm-info-window-content-${index}" class="info-window-content">
+                                ${location.vicinity}
+                              </div>`;
+
+        const infowindow = new google.maps.InfoWindow({
+          content: contentString
+        });
+
+        infoWindows.push(infowindow); // Add the info window to the array
+
+        // Automatically open all info windows
+        infowindow.open(map, marker);
+
+        google.maps.event.addListener(infowindow, 'domready', () => {
+          document.getElementById(`atm-info-window-content-${index}`).addEventListener('click', () => {
+            // Notify the native app about the ATM click event
+            if (window.nativeapp && window.nativeapp.bridge && window.nativeapp.bridge.execute) {
+              window.nativeapp.bridge.execute('goNativeScreen', {
+                screenName: 'googlemaps',
+                currentCoordinates: {
+                  lat: userLocation.lat,
+                  lng: userLocation.lng
+                },
+                atmCoordinates: {
+                  lat: location.geometry.location.lat(),
+                  lng: location.geometry.location.lng()
+                },
+                atmDetails: {
+                  vicinity: location.vicinity
+                }
+              });
+            }
+          });
+        });
+
+        marker.addListener('click', () => {
+          infowindow.open(map, marker); // Open the info window for the clicked marker
+        });
+      });
+    }
+
+    function setMapZoomAndCenter() {
+      const bounds = new google.maps.LatLngBounds();
+      markers.forEach(marker => {
+bounds.extend(marker.getPosition());
+      });
+      map.fitBounds(bounds);
+    }
+
+    // Function to be called by native app to initialize the map with user's current location
+    window.initializeMap = function(lat, lng) {
+      initMap(lat, lng);
+    }
+
+    // Function to get the top 3 branches based on latitude and longitude and travel mode
+    window.getTopBranches = function(lat, lng, travelMode) {
+      const userLocation = { lat, lng };
+      const request = {
+        location: userLocation,
+        radius: '10000', // 10km radius
+        type: ['bank', 'atm'],
+        keyword: 'Wells Fargo'
+      };
+
+      placesService.nearbySearch(request, (results, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          // Separate branches and ATMs
+          const branches = results.filter(result => result.types.includes('bank'));
+          const atms = results.filter(result => result.types.includes('atm'));
+
+          // Filter out closed branches for distance calculation
+          const openBranches = branches.filter(branch => branch.opening_hours && branch.opening_hours.open_now);
+          const destinations = openBranches.map(branch => branch.geometry.location);
+
+          distanceMatrixService.getDistanceMatrix({
+            origins: [new google.maps.LatLng(userLocation.lat, userLocation.lng)],
+            destinations: destinations,
+            travelMode: google.maps.TravelMode[travelMode.toUpperCase()], // Use specified travel mode
+            unitSystem: google.maps.UnitSystem.IMPERIAL, // Use Imperial units for miles
+          }, (response, status) => {
+            if (status === google.maps.DistanceMatrixStatus.OK) {
+              const results = response.rows[0].elements;
+              const distances = results.map((result, index) => ({
+                branch: openBranches[index],
+                duration: result.duration.value, // Duration in seconds
+                distance: result.distance.value, // Distance in meters
+                distanceText: result.distance.text, // Distance text
+                waitTime: Math.floor(Math.random() * 30) + 1 // Random wait time between 1 and 30 minutes
+              }));
+              distances.sort((a, b) => a.duration - b.duration);
+              const topBranches = distances.slice(0, 3).map(branch => ({
+                name: branch.branch.name,
+                vicinity: branch.branch.vicinity,
+                distance: branch.distanceText,
+                duration: (branch.duration / 60).toFixed(2),
+                waitTime: branch.waitTime
+              }));
+              window.webkit.messageHandlers.getTopBranchesCallback.postMessage(topBranches);
+            }
+          });
+
+          // Display all branches (open and closed)
+          displayBranches(branches, userLocation);
+
+          // Display ATMs separately
+          displayLocations(atms, userLocation, ATM_MARKER_ICON_URL);
+        }
+      });
+    }
+
+    // Initialize the map once the script is loaded
+    window.addEventListener('load', initializeServices);
+  </script>
+</body>
+</html>
