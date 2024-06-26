@@ -1,0 +1,18 @@
+Here is an elaboration on the task definitions for LLM Inferencing:
+
+### Ingest
+**Description**: This task involves the process of taking documents and converting them into a format suitable for storage and retrieval in a vector store. A vector store is a database that indexes documents based on their semantic content rather than traditional keyword indexing. The indexing process includes parsing the documents, extracting relevant features, and embedding them into high-dimensional vectors using pre-trained language models. This allows for efficient similarity searches and advanced retrieval techniques.
+
+### Search
+**Description**: The search task allows users to query the vector store to find documents that are semantically similar to a given input query. This involves using the same embedding techniques to convert the query into a vector and then performing a nearest-neighbor search in the vector space to retrieve relevant documents. This type of search is more advanced than traditional keyword searches as it can understand the context and meaning behind the words, providing more accurate and relevant results.
+
+### Generate
+**Description**: The generate task refers to the use of language models to create new text based on a given input prompt. This can include generating coherent and contextually appropriate sentences, paragraphs, or even entire articles. The task leverages advanced models like GPT (Generative Pre-trained Transformer) that can understand the context of the input and produce human-like text. Applications of this task include content creation, chatbots, automated writing assistance, and more.
+
+### Summarize
+**Description**: Summarization involves condensing a larger body of text into a shorter version that retains the key information and main points. This task can be performed in two ways: extractive summarization, where key sentences are selected from the original text, and abstractive summarization, where new sentences are generated to capture the essence of the original content. This task is useful for quickly understanding the main ideas of long documents, articles, or reports.
+
+### Classify
+**Description**: The classify task involves assigning predefined categories or labels to a piece of text based on its content. This can be used for a variety of applications such as sentiment analysis, topic categorization, spam detection, and more. The classification process typically involves training a model on a labeled dataset and then using this model to predict the categories of new, unseen text. This task helps in organizing and managing large volumes of text data by grouping them into meaningful categories.
+
+Each of these tasks leverages the capabilities of large language models to enhance the functionality and efficiency of handling textual data, providing users with advanced tools for text processing and analysis.
