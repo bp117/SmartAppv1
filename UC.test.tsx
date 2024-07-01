@@ -5,9 +5,14 @@ import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import { UserProvider, UserContext } from './UserContext';
 
+// Create a new instance of axios-mock-adapter
 const mock = new MockAdapter(axios);
 
 describe('UserContext', () => {
+  beforeEach(() => {
+    mock.reset();
+  });
+
   it('should initialize with default values', () => {
     render(
       <UserProvider>
@@ -48,7 +53,7 @@ describe('UserContext', () => {
     );
 
     await waitFor(() => expect(mock.history.get.length).toBe(2));
-    expect(screen.getByTestId('loggedInUser')).toHaveTextContent('Test User');
+    await waitFor(() => expect(screen.getByTestId('loggedInUser')).toHaveTextContent('Test User'));
   });
 
   it('should save new user if they do not exist', async () => {
@@ -79,6 +84,6 @@ describe('UserContext', () => {
 
     await waitFor(() => expect(mock.history.get.length).toBe(2));
     await waitFor(() => expect(mock.history.post.length).toBe(1));
-    expect(screen.getByTestId('loggedInUser')).toHaveTextContent('New User');
+    await waitFor(() => expect(screen.getByTestId('loggedInUser')).toHaveTextContent('New User'));
   });
 });
