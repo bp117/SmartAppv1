@@ -3,15 +3,43 @@ import re
 from PyPDF2 import PdfReader
 
 # Load the spans JSON file
-with open('/mnt/data/output4_TAMP.json') as json_file:
+json_file_path = '/mnt/data/file-c0uCXi0KJGdhhEp3RUyqR0Dc'
+with open(json_file_path) as json_file:
     spans_data = json.load(json_file)
 
-# Load the PDF file
-pdf_path = '/mnt/data/ACT Invoice.pdf'
-pdf_reader = PdfReader(pdf_path)
+# Extract the text spans
+spans_text = [span[1] for span in spans_data]
+
+# Define the expected headers and their formats
+headers_and_formats = {
+    "Previous Due ₹": r"\d+",
+    "Payments Received ₹": r"\d+",
+    "Adjustments ₹": r"\d+",
+    "Invoice Amount ₹": r"\d{1,3}(,\d{3})*",
+    "Balance Amount ₹": r"\d{1,3}(,\d{3})*",
+    "Amount Payable ₹": r"\d{1,3}(,\d{3})*",
+    "If paid after due date": r"\d{1,3}(,\d{3})*",
+    "Txn No": r".+",
+    "Txn Date": r"\d{2}/\d{2}/\d{4}",
+    "Period": r".+ - .+",
+    "Description": r".+",
+    "HSN Code": r"\d+",
+    "Package/Goods Description": r".+",
+    "Rate": r"\d{1,3}(,\d{3})*",
+    "Unit": r".+",
+    "Quantity": r"\d+ days",
+    "Discount": r"\d+",
+    "Taxable Amount": r"\d{1,3}(,\d{3})*",
+    "CGST Rate %": r"\d+",
+    "CGST Amount": r"\d{1,3}(,\d{3})*",
+    "SGST Rate %": r"\d+",
+    "SGST Amount": r"\d{1,3}(,\d{3})*",
+    "Amount Incl. Tax": r"\d{1,3}(,\d{3})*",
+}
 
 # Validate metadata
-def validate_metadata():
+def validate_metadata(pdf_path):
+    pdf_reader = PdfReader(pdf_path)
     metadata = pdf_reader.metadata
     creation_date = metadata.get('/CreationDate', '')
     modification_date = metadata.get('/ModDate', '')
@@ -28,84 +56,46 @@ def validate_metadata():
     return True
 
 # Validate the sequence and format of table spans
-def validate_spans(spans_data):
-    # Define the expected headers and their formats
-    headers_and_formats = {
-        "Previous Due ₹": r"\d+",
-        "Payments Received ₹": r"\d+",
-        "Adjustments ₹": r"\d+",
-        "Invoice Amount ₹": r"\d{1,3}(,\d{3})*",
-        "Balance Amount ₹": r"\d{1,3}(,\d{3})*",
-        "Amount Payable ₹": r"\d{1,3}(,\d{3})*",
-        "Amount Payable ₹": r"\d{1,3}(,\d{3})*",
-        "If paid after due date": r"\d{1,3}(,\d{3})*",
-        "Txn No": r".+",
-        "Txn Date": r"\d{2}/\d{2}/\d{4}",
-        "Period": r".+ - .+",
-        "Description": r".+",
-        "HSN Code": r"\d+",
-        "Package/Goods Description": r".+",
-        "Rate": r"\d{1,3}(,\d{3})*",
-        "Unit": r".+",
-        "Quantity": r"\d+ days",
-        "Discount": r"\d+",
-        "Taxable Amount": r"\d{1,3}(,\d{3})*",
-        "CGST Rate %": r"\d+",
-        "CGST Amount": r"\d{1,3}(,\d{3})*",
-        "SGST Rate %": r"\d+",
-        "SGST Amount": r"\d{1,3}(,\d{3})*",
-        "Amount Incl. Tax": r"\d{1,3}(,\d{3})*",
-    }
+def validate_spans(spans_text, headers_and_formats):
+    header_keys = list(headers_and_formats.keys())
+    header_indices = [spans_text.index(header) for header in header_keys if header in spans_text]
 
-    spans_text = [span[1] for span in spans_data]
+    if len(header_indices) != len(header_keys):
+        print("Validation failed: Some headers are missing")
+        return False
 
-    def validate_headers_and_values(spans_text, headers_and_formats):
-        header_positions = [i for i, text in enumerate(spans_text) if text in headers_and_formats]
-        
-        for i in range(len(header_positions) - 1):
-            header = spans_text[header_positions[i]]
-            next_header = spans_text[header_positions[i + 1]]
-            header_index = spans_text.index(header)
-            next_header_index = spans_text.index(next_header)
-
-            # Extract values between current header and next header
-            values = spans_text[header_index + 1: next_header_index]
-            if not values:
-                print(f"Validation failed: No values found for header '{header}'")
-                return False
-            
-            # Validate the values with the regex
-            regex = headers_and_formats[header]
-            for value in values:
-                if not re.match(regex, value):
-                    print(f"Validation failed for header '{header}': value '{value}' does not match expected format")
-                    return False
-        
-        # Validate the last header values
-        last_header = spans_text[header_positions[-1]]
-        last_header_index = spans_text.index(last_header)
-        values = spans_text[last_header_index + 1:]
-        if not values:
-            print(f"Validation failed: No values found for header '{last_header}'")
+    # Ensure all headers come first in the correct order
+    for i in range(1, len(header_indices)):
+        if header_indices[i] <= header_indices[i-1]:
+            print(f"Validation failed: Header '{header_keys[i]}' is out of order")
             return False
-        
-        regex = headers_and_formats[last_header]
-        for value in values:
-            if not re.match(regex, value):
-                print(f"Validation failed for header '{last_header}': value '{value}' does not match expected format")
-                return False
 
-        return True
+    # Extract the values following the headers
+    values_start_index = header_indices[-1] + 1
+    values = spans_text[values_start_index:values_start_index + len(header_keys)]
 
-    return validate_headers_and_values(spans_text, headers_and_formats)
+    if len(values) != len(header_keys):
+        print("Validation failed: Number of values does not match number of headers")
+        return False
+
+    # Validate the values against the formats
+    for i, header in enumerate(header_keys):
+        value = values[i]
+        regex = headers_and_formats[header]
+        if not re.match(regex, value):
+            print(f"Validation failed for header '{header}': value '{value}' does not match expected format")
+            return False
+
+    return True
 
 # Run validations
-if validate_metadata():
+pdf_path = '/mnt/data/ACT Invoice.pdf'
+if validate_metadata(pdf_path):
     print("Metadata validation passed")
 else:
     print("Metadata validation failed")
 
-if validate_spans(spans_data):
+if validate_spans(spans_text, headers_and_formats):
     print("Spans validation passed")
 else:
     print("Spans validation failed")
