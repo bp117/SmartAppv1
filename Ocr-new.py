@@ -59,43 +59,45 @@ def validate_spans(spans_data):
 
     spans_text = [span[1] for span in spans_data]
 
-    def validate_sequence(headers_and_formats, spans_text):
-        header_indices = [spans_text.index(header) for header in headers_and_formats if header in spans_text]
+    def validate_headers_and_values(spans_text, headers_and_formats):
+        header_positions = [i for i, text in enumerate(spans_text) if text in headers_and_formats]
         
-        if not header_indices:
-            print("No headers found in the document.")
+        for i in range(len(header_positions) - 1):
+            header = spans_text[header_positions[i]]
+            next_header = spans_text[header_positions[i + 1]]
+            header_index = spans_text.index(header)
+            next_header_index = spans_text.index(next_header)
+
+            # Extract values between current header and next header
+            values = spans_text[header_index + 1: next_header_index]
+            if not values:
+                print(f"Validation failed: No values found for header '{header}'")
+                return False
+            
+            # Validate the values with the regex
+            regex = headers_and_formats[header]
+            for value in values:
+                if not re.match(regex, value):
+                    print(f"Validation failed for header '{header}': value '{value}' does not match expected format")
+                    return False
+        
+        # Validate the last header values
+        last_header = spans_text[header_positions[-1]]
+        last_header_index = spans_text.index(last_header)
+        values = spans_text[last_header_index + 1:]
+        if not values:
+            print(f"Validation failed: No values found for header '{last_header}'")
             return False
         
-        header_indices.sort()
-        
-        for index, header in enumerate(headers_and_formats):
-            if header not in spans_text:
-                print(f"Header '{header}' missing in document.")
+        regex = headers_and_formats[last_header]
+        for value in values:
+            if not re.match(regex, value):
+                print(f"Validation failed for header '{last_header}': value '{value}' does not match expected format")
                 return False
-            header_position = spans_text.index(header)
-            
-            if index < len(header_indices) - 1:
-                next_header_position = spans_text.index(list(headers_and_formats.keys())[index + 1])
-                # Values should be between current header and next header
-                values = spans_text[header_position + 1: next_header_position]
-            else:
-                # Last header, values should be till the end
-                values = spans_text[header_position + 1:]
 
-            if not values:
-                print(f"No values found for header '{header}', document is tampered.")
-                return False
-            
-            for value in values:
-                if re.match(headers_and_formats[header], value):
-                    continue
-                else:
-                    print(f"Value '{value}' for header '{header}' does not match the expected format.")
-                    return False
-                
         return True
 
-    return validate_sequence(headers_and_formats, spans_text)
+    return validate_headers_and_values(spans_text, headers_and_formats)
 
 # Run validations
 if validate_metadata():
