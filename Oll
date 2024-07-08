@@ -1,0 +1,21 @@
+import torch
+from transformers import LlamaTokenizer, LlamaForCausalLM
+
+# Load tokenizer and model
+model_path = "path_to_your_llama_model/llama-3"
+tokenizer = LlamaTokenizer.from_pretrained(model_path)
+model = LlamaForCausalLM.from_pretrained(model_path)
+
+# Move model to GPU if available
+device = torch.device("mps") if torch.has_mps else torch.device("cpu")
+model.to(device)
+
+# Encode input text
+input_text = "Hello, LLaMA!"
+inputs = tokenizer(input_text, return_tensors="pt").to(device)
+
+# Generate output
+outputs = model.generate(inputs["input_ids"], max_length=50)
+output_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+print(output_text)
