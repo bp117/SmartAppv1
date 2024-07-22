@@ -1,15 +1,1 @@
-**Problem Statement:**
-The document addresses two main challenges:
-1. **Personalizing User Experience:** Designing a user interface that caters to varying user competencies is difficult. User competencies vary greatly depending on familiarity, age, experience, and other factors. It is beneficial to alter the user experience according to each user’s competency with the device and/or application.
-2. **Authentication and Security:** Most device authentications rely on simple username/password combinations, which are easily compromised. Continuous user authentication after initial login is needed for better security.
 
-**Solution:**
-The document proposes a system that combines user interface competence adaptation and fraud detection. Here are the key components of the solution:
-1. **User Interface Provision:** Provide a user interface on the user device, facilitating user interactions.
-2. **Monitoring User Interactions:** Monitor user interactions, including controlling, navigating, and inputting on the user interface.
-3. **Analyzing User Interactions:** Analyze the interactions for factors indicative of user proficiency, such as speed of movement, typing speed, and frequency of help requests.
-4. **Determining User Proficiency:** Determine a user proficiency score based on the analyzed factors.
-5. **Device Configuration Adaptation:** Adapt the device configuration based on the determined user proficiency, enhancing usability.
-6. **Fraud Detection:** Monitor changes in user proficiency and implement security measures if the change exceeds a threshold, effectively detecting potential unauthorized access.
-
-By continuously monitoring user interactions and adapting the device configuration, the system ensures a tailored user experience while maintaining security.
