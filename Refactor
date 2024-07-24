@@ -1,0 +1,36 @@
+def process_file(file_path):
+    try:
+        with open(file_path, 'r') as insert_document:
+            record = insert_document.read()
+            record = json_util.loads(record)
+            record = self.format_date_and_user(record)
+            process_record(record, file_path)
+    except Exception as e:
+        print("Exception has occurred during import.")
+
+def process_record(record, file_path):
+    for key, value in record.items():
+        if isinstance(value, list):
+            process_list(value, key, file_path)
+        elif isinstance(value, dict):
+            process_dict(value, key, file_path)
+
+def process_list(value_list, key, file_path):
+    for val in value_list:
+        if not self.update_if_id_exists(val, val['_id'], key):
+            result = self.registry_init.insert_db_many(val, key)
+            print(f"{key} document in {file_path} imported successfully")
+
+def process_dict(value_dict, key, file_path):
+    if not self.update_if_id_exists(value_dict, value_dict['_id'], key):
+        result = self.registry_init.insert_db(value_dict, key)
+        print(f"{key} document in {file_path} imported successfully")
+
+def main_function(full_file_path):
+    file_paths = self.get_file_path(full_file_path)
+    for file_path in file_paths:
+        print(file_path)
+        process_file(file_path)
+
+# Call the main function
+main_function(full_file_path)
