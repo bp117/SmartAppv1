@@ -1,3 +1,39 @@
+
+
+Understood. Here's the revised draft:
+
+---
+
+Subject: Performance Test Results and Configuration Updates
+
+Dear Team,
+
+I wanted to inform you that the performance test results will be received by this evening. Please note that we will be able to share these results only after a thorough review by the DIA team.
+
+In addition, we are standardizing the naming conventions across use cases, which will result in a change to the use case IDs and consequently, the API keys. As part of this effort, we request that you externalize the following parameters in configuration properties to minimize impact during production deployments:
+
+- Use Case ID
+- API Key
+- Apigee Secret
+- Password
+
+Externalizing these details will ensure smoother and more efficient deployment processes.
+
+Please let me know if you have any questions or require further details.
+
+Best regards,
+
+[Your Name]  
+[Your Position]  
+[Your Contact Information]
+
+---
+
+Feel free to adjust this as necessary.
+
+
+
+
 def process_file(file_path):
     try:
         with open(file_path, 'r') as insert_document:
