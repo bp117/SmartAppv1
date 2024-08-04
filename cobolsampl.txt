@@ -1,0 +1,187 @@
+      **********************************************************
+      * COBCALC                                                *
+      *                                                        *
+      * A simple program that allows financial functions to    *
+      * be performed using intrinsic functions.                *
+      *                                                        *
+      **********************************************************
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBCALC.
+       ENVIRONMENT DIVISION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  PARM-1.
+           05  CALL-FEEDBACK     PIC XX.
+       01  FIELDS.
+           05  INPUT-1           PIC X(10).
+       01  INPUT-BUFFER-FIELDS.
+           05  BUFFER-PTR        PIC 9.
+           05  BUFFER-DATA.
+               10  FILLER        PIC X(10)  VALUE "LOAN".
+               10  FILLER        PIC X(10)  VALUE "PVALUE".
+               10  FILLER        PIC X(10)  VALUE "pvalue".
+               10  FILLER        PIC X(10)  VALUE "END".
+           05  BUFFER-ARRAY    REDEFINES BUFFER-DATA
+                               OCCURS 4 TIMES
+                                 PIC X(10).
+
+       PROCEDURE DIVISION.
+           DISPLAY "CALC Begins." UPON CONSOLE.
+           MOVE 1 TO BUFFER-PTR.
+           MOVE SPACES TO INPUT-1.
+      * Keep processing data until END requested
+           PERFORM ACCEPT-INPUT UNTIL INPUT-1 EQUAL TO "END".
+      * END requested
+           DISPLAY "CALC Ends." UPON CONSOLE.
+           GOBACK.
+      * End of program.
+
+      *
+      * Accept input data from buffer
+      *
+       ACCEPT-INPUT.
+           MOVE BUFFER-ARRAY (BUFFER-PTR) TO INPUT-1.
+           ADD 1 BUFFER-PTR GIVING BUFFER-PTR.
+      * Allow input data to be in UPPER or lower case
+           EVALUATE FUNCTION UPPER-CASE(INPUT-1)     CALC1              
+             WHEN "END"           
+               MOVE "END" TO INPUT-1
+             WHEN "LOAN"
+               PERFORM CALCULATE-LOAN
+             WHEN "PVALUE"
+               PERFORM CALCULATE-VALUE
+             WHEN OTHER
+               DISPLAY "Invalid input: " INPUT-1
+           END-EVALUATE.
+      *
+      * Calculate Loan via CALL to subprogram
+      *
+       CALCULATE-LOAN.
+           CALL "COBLOAN" USING CALL-FEEDBACK.
+           IF CALL-FEEDBACK IS NOT EQUAL "OK" THEN
+             DISPLAY "Call to COBLOAN Unsuccessful.".
+      *
+      * Calculate Present Value via CALL to subprogram
+      *
+       CALCULATE-VALUE.
+           CALL "COBVALU" USING CALL-FEEDBACK.
+           IF CALL-FEEDBACK IS NOT EQUAL "OK" THEN
+             DISPLAY "Call to COBVALU Unsuccessful.".
+
+            **********************************************************
+      * COBLOAN                                                *
+      *                                                        *
+      * A simple subprogram that calculates payment amount     *
+      * for a loan.                                            *
+      *                                                        *
+      **********************************************************
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBLOAN.
+       ENVIRONMENT DIVISION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  FIELDS.
+           05  INPUT-1           PIC X(26).
+           05  PAYMENT           PIC S9(9)V99 USAGE COMP.
+           05  PAYMENT-OUT       PIC $$$$,$$$,$$9.99 USAGE DISPLAY.
+           05  LOAN-AMOUNT       PIC S9(7)V99 USAGE COMP.
+           05  LOAN-AMOUNT-IN    PIC X(16).
+           05  INTEREST-IN       PIC X(5).
+           05  INTEREST          PIC S9(3)V99 USAGE COMP.
+           05  NO-OF-PERIODS-IN  PIC X(3).
+           05  NO-OF-PERIODS     PIC 99 USAGE COMP.
+           05  OUTPUT-LINE       PIC X(79).
+       LINKAGE SECTION.
+       01  PARM-1.
+           05  CALL-FEEDBACK     PIC XX.
+       PROCEDURE DIVISION USING PARM-1.
+           MOVE "NO" TO CALL-FEEDBACK.
+           MOVE "30000 .09 24 " TO INPUT-1.
+           UNSTRING INPUT-1 DELIMITED BY ALL " "
+             INTO LOAN-AMOUNT-IN INTEREST-IN NO-OF-PERIODS-IN.
+      * Convert to numeric values
+           COMPUTE LOAN-AMOUNT = FUNCTION NUMVAL(LOAN-AMOUNT-IN).
+           COMPUTE INTEREST = FUNCTION NUMVAL(INTEREST-IN).
+           COMPUTE NO-OF-PERIODS = FUNCTION NUMVAL(NO-OF-PERIODS-IN).
+      * Calculate annuity amount required
+           COMPUTE PAYMENT = LOAN-AMOUNT *
+               FUNCTION ANNUITY((INTEREST / 12 ) NO-OF-PERIODS).
+      * Make it presentable
+           MOVE SPACES TO OUTPUT-LINE
+           MOVE PAYMENT TO PAYMENT-OUT.
+           STRING "COBLOAN:_Repayment_amount_for_a_" NO-OF-PERIODS-IN
+                   "_month_loan_of_" LOAN-AMOUNT-IN
+                   "_at_" INTEREST-IN "_interest_is:_"
+               DELIMITED BY SPACES
+               INTO OUTPUT-LINE.
+           INSPECT OUTPUT-LINE REPLACING ALL "_" BY SPACES.
+           DISPLAY OUTPUT-LINE PAYMENT-OUT.
+           MOVE "OK" TO CALL-FEEDBACK.
+           GOBACK.
+
+            **********************************************************
+      * COBVALU                                                *
+      *                                                        *
+      * A simple subprogram that calculates present value      *
+      * for a series of cash flows.                            *
+      *                                                        *
+      **********************************************************
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. COBVALU.
+       ENVIRONMENT DIVISION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  CHAR-DATA.
+           05  INPUT-1           PIC X(10).
+           05  PAYMENT-OUT       PIC $$$$,$$$,$$9.99 USAGE DISPLAY.
+           05  INTEREST-IN       PIC X(5).
+           05  NO-OF-PERIODS-IN  PIC X(3).
+           05  INPUT-BUFFER      PIC X(10) VALUE "5069837544".
+           05  BUFFER-ARRAY   REDEFINES INPUT-BUFFER
+                              OCCURS 5 TIMES
+                                 PIC XX.
+           05  OUTPUT-LINE       PIC X(79).
+       01 NUM-DATA.
+           05  PAYMENT           PIC S9(9)V99 USAGE COMP.
+           05  INTEREST          PIC S9(3)V99 USAGE COMP.
+           05  COUNTER           PIC 99 USAGE COMP.
+           05  NO-OF-PERIODS     PIC 99 USAGE COMP.
+           05  VALUE-AMOUNT   OCCURS 99 PIC S9(7)V99 COMP.
+       LINKAGE SECTION.
+       01  PARM-1.
+           05  CALL-FEEDBACK  PIC XX.
+       PROCEDURE DIVISION USING PARM-1.
+           MOVE "NO" TO CALL-FEEDBACK.
+           MOVE ".12 5 " TO INPUT-1.
+           UNSTRING INPUT-1 DELIMITED BY "," OR ALL " "                VALU1 
+            INTO INTEREST-IN NO-OF-PERIODS-IN.
+      * Convert to numeric values
+           COMPUTE INTEREST = FUNCTION NUMVAL(INTEREST-IN).            VALU2 
+           COMPUTE NO-OF-PERIODS = FUNCTION NUMVAL(NO-OF-PERIODS-IN).
+      * Get cash flows
+           PERFORM GET-AMOUNTS VARYING COUNTER FROM 1 BY 1 UNTIL
+             COUNTER IS GREATER THAN NO-OF-PERIODS.
+      * Calculate present value
+           COMPUTE PAYMENT =
+               FUNCTION PRESENT-VALUE(INTEREST VALUE-AMOUNT(ALL) ).    VALU3 
+      * Make it presentable
+           MOVE PAYMENT TO PAYMENT-OUT.
+           STRING "COBVALU:_Present_value_for_rate_of_"
+                  INTEREST-IN "_given_amounts_"
+                  BUFFER-ARRAY (1) ",_"
+                  BUFFER-ARRAY (2) ",_"
+                  BUFFER-ARRAY (3) ",_"
+                  BUFFER-ARRAY (4) ",_"
+                  BUFFER-ARRAY (5) "_is:_"
+               DELIMITED BY SPACES
+               INTO OUTPUT-LINE.
+           INSPECT OUTPUT-LINE REPLACING ALL "_" BY SPACES.
+           DISPLAY OUTPUT-LINE PAYMENT-OUT.
+           MOVE "OK" TO CALL-FEEDBACK.
+           GOBACK.
+      *
+      * Get cash flows for each period
+      *
+       GET-AMOUNTS.
+           MOVE BUFFER-ARRAY (COUNTER) TO INPUT-1.
+           COMPUTE VALUE-AMOUNT (COUNTER) = FUNCTION NUMVAL(INPUT-1).
