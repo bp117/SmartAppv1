@@ -1,0 +1,7 @@
+Task:
+Design and Implementation of Higgs.ai on the Tachyon Platform:
+I led the design and implementation of Higgs.ai, the control plane for the Tachyon platform, which is central to our generative AI initiatives. Higgs.ai was architected to provide canonical endpoints that expose underlying large language models as a service. The architecture was designed to support both poly-cloud and on-premise inferencing, ensuring scalability and flexibility in deploying AI-driven solutions across the bank.
+
+Impact:
+Driving Innovation and Efficiency in AI Deployment:
+The scalable and efficient design of Higgs.ai has been pivotal in transforming the bank's approach to deploying AI-driven solutions. By enabling poly-cloud and on-premise inferencing, the platform has significantly reduced the effort and time required to deploy AI models, shrinking timelines from years to days. This has not only fostered enterprise-level innovation but has also greatly enhanced operational efficiency, allowing the bank to rapidly implement and scale AI initiatives, thereby maintaining a competitive edge in the financial industry.
