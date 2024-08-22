@@ -1,0 +1,23 @@
+import nltk
+
+try:
+    from regex import _regex
+    print("Successfully imported _regex from regex.")
+except ImportError as e:
+    print(f"Failed to import _regex from regex: {e}")
+    raise
+
+# Sample text for regex operations
+sample_text = "The quick brown fox jumps over the lazy dog."
+
+# Test a simple regex pattern to find all words starting with 't' or 'T'
+# We'll use _regex to compile the pattern and find matches
+pattern = _regex.compile(r'\b[tT]\w+')
+
+# Find all matches in the sample text
+matches = pattern.findall(sample_text)
+print("Regex Matches:", matches)
+
+# Test if NLTK works by tokenizing the sample text
+tokens = nltk.word_tokenize(sample_text)
+print("NLTK Tokens:", tokens)
