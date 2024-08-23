@@ -1,0 +1,61 @@
+{
+  "timestamp": "YYYY-MM-DDTHH:MM:SSZ",
+  "operation": "CREATE/UPDATE/DELETE",
+  "entity_type": "USECASE/MODEL/PROMPT",
+  "entity_id": "unique_identifier_of_entity",
+  "user_id": "user_identifier",
+  "user_role": "user_role_if_applicable",
+  "changes": {
+    "field_name_1": {
+      "old_value": "previous_value",
+      "new_value": "new_value"
+    },
+    "field_name_2": {
+      "old_value": "previous_value",
+      "new_value": "new_value"
+    }
+  },
+  "request_ip": "IP_address_of_request",
+  "request_url": "URL_of_the_operation",
+  "request_method": "HTTP_method_used",
+  "user_agent": "User_agent_string",
+  "remarks": "Additional_remarks_or_reason_for_change"
+}
+
+{
+  "timestamp": "2024-08-23T14:55:30Z",
+  "operation": "UPDATE",
+  "entity_type": "MODEL",
+  "entity_id": "model_12345",
+  "user_id": "user_67890",
+  "user_role": "admin",
+  "changes": {
+    "model_name": {
+      "old_value": "Model_v1",
+      "new_value": "Model_v2"
+    },
+    "description": {
+      "old_value": "Initial version of the model.",
+      "new_value": "Updated to improve accuracy."
+    }
+  },
+  "request_ip": "192.168.1.10",
+  "request_url": "/api/models/12345",
+  "request_method": "PUT",
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+  "remarks": "Improved model performance"
+}
+
+{
+  "timestamp": "<ISO 8601 timestamp>",
+  "event_type": "create" | "update" | "delete",
+  "user_id": "<user_id>",
+  "model_id": "<model_id>",
+  "prompt": "<prompt_text>",
+  "old_value": "<old_data_json>",
+  "new_value": "<new_data_json>",
+  "action_taken": "<action_description>",
+  "error_message": "<error_message_if_any>",
+  "ip_address": "<client_ip_address>",
+  "request_id": "<request_id>"
+}
