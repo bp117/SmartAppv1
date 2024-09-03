@@ -1,0 +1,43 @@
+Certainly! Here's an updated version of the slide outline with a focus on highlighting the Spectral and Backstage POCs:
+
+---
+
+### **Title: API Framework Creation & Integration with Orchestra**
+
+---
+
+#### **Problem Statement:**
+- **Lack of Standardization:** Microservices across the organization were implemented inconsistently, leading to increased complexity and reduced maintainability.
+- **Integration Challenges:** Difficulty in integrating microservices into the org-wide portal, Orchestra, leading to inefficiencies.
+- **Governance Gaps:** Absence of robust API governance led to potential security and performance issues.
+
+---
+
+#### **Solution:**
+- **Standardization through API Framework:** Developed a standardized API framework that ensures consistent implementation of cross-cutting concerns (e.g., logging, security, error handling) across all microservices.
+- **Integration with Orchestra:** Seamlessly integrated the framework with Orchestra, the in-house portal, to ensure smooth onboarding of new services and efficient service management.
+- ****Spectral POC for API Governance:** Implemented a Proof of Concept using Spectral to introduce automated linting for all APIs. This enforced best practices and governance, ensuring all APIs conform to organizational standards.
+- **Backstage POC for Service Catalog:** Piloted the use of Backstage to create a centralized service catalog. This enabled better service discoverability, improved developer onboarding, and streamlined microservices management.
+
+---
+
+#### **Tools & Technologies:**
+- **API Framework Tools:** Spring Boot, OpenAPI, Custom Middleware
+- **Orchestra Integration:** RESTful APIs, OAuth2, Custom Adapters
+- **Governance Tools:**
+  - **Spectral:** API linting to enforce best practices.
+  - **Backstage:** Centralized service catalog for efficient management.
+
+---
+
+#### **Outcome:**
+- **Improved Consistency:** All microservices now adhere to a standardized framework, reducing technical debt.
+- **Enhanced Efficiency:** Faster and more reliable integration of microservices into Orchestra.
+- **Robust Governance:**
+  - **Spectral POC:** Resulted in higher API quality and security through automated linting.
+  - **Backstage POC:** Simplified service management and enhanced developer experience.
+- **Developer Experience:** Improved productivity and onboarding efficiency through Backstage.
+
+---
+
+This version of the slide emphasizes the Spectral and Backstage POCs, showcasing their importance in enhancing API governance and service management.
