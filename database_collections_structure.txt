@@ -1,0 +1,99 @@
+
+1. users Collection:
+- _id
+- username
+- email
+- password_hash
+- role
+- permissions[]
+- created_at
+- last_login
+- status
+
+2. roles Collection:
+- _id
+- role_name
+- description
+- permissions[]
+- created_at
+
+3. apps Collection:
+- _id
+- app_id
+- app_name
+- created_by
+- created_at
+- updated_at
+- description
+- status
+- version
+- embedding_model_id
+- language_model_id
+- documents[]
+- prompt_templates[]
+- collaborators[]
+
+4. documents Collection:
+- _id
+- document_id
+- app_id
+- document_name
+- document_size
+- uploaded_by
+- uploaded_at
+- chunking_strategy
+- chunked_data[]
+- metadata{} (source_type, tags, status)
+
+5. models Collection:
+- _id
+- model_id
+- model_type
+- model_name
+- description
+- version
+- created_at
+- updated_at
+- model_params{} (max_tokens, temperature, top_p)
+- status
+- tags[]
+- used_in_apps[]
+
+6. prompt_templates Collection:
+- _id
+- app_id
+- template_name
+- system_instructions
+- user_prompt
+- variables[]
+- created_by
+- created_at
+- updated_at
+- version
+- status
+
+7. app_versions Collection:
+- _id
+- app_id
+- version
+- description
+- config{} (embedding_model_id, language_model_id, chunking_strategy, chunked_data{})
+- prompt_templates[]
+- created_at
+- created_by
+
+8. logs Collection:
+- _id
+- event_type (create_app, update_app, delete_app, document_upload, etc.)
+- description
+- user_id
+- app_id
+- document_id
+- timestamp
+- metadata{} (chunking_strategy, file_size, status)
+
+9. permissions Collection:
+- _id
+- permission_name
+- description
+- created_at
