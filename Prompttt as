@@ -1,0 +1,12 @@
+The prompt used to generate the elaborate user stories was:
+
+
+---
+
+"Create user stories to guide development based on the provided feature description and current vs. target state workflow diagrams. Each user story should clearly outline the role, the action required, and the expected outcome. Ensure that the stories focus on the user experience and how each step brings the feature closer to the target state. Highlight any dependencies or conditions that must be met for each story, and keep the language concise and actionable. The stories should adhere to the INVEST principle, and for each user story, generate BDD test cases and acceptance criteria."
+
+
+---
+
+This prompt guided the creation of detailed, actionable user stories that focus on transitioning from the current to the target state, with BDD test cases and acceptance criteria to ensure clarity and testability.
+
