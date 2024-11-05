@@ -47,9 +47,23 @@ const PlaygroundPage = () => {
       {/* Middle Section - Chat Interface */}
       <div className="flex flex-col w-1/2 border-x bg-white h-full">
         
-        {/* Top Section - Clear and System Instructions */}
+        {/* Top Section - Model Selection */}
         <div className="flex justify-between p-4 bg-gray-200 flex-shrink-0">
-          <Button onClick={clearMessages}>Clear</Button>
+          <Select
+            name="model"
+            value={selectedModel}
+            onChange={(e) => setSelectedModel(e.target.value)}
+            className="w-full"
+          >
+            <option value="" disabled>Select a Model</option>
+            {/* Add model options here */}
+            <option value="model1">Model 1</option>
+            <option value="model2">Model 2</option>
+          </Select>
+        </div>
+
+        {/* System Instructions Accordion */}
+        <div className="p-4 bg-gray-200 flex-shrink-0">
           <Accordion type="single" collapsible>
             <Accordion.Item value="system-instructions">
               <Accordion.Trigger>System Instructions</Accordion.Trigger>
