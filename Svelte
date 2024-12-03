@@ -132,6 +132,12 @@
             getTypingEffect(result);
           }
           break;
+        case "sendToEditor":
+          // Implementing the send to editor functionality
+          vscode.window.activeTextEditor.edit((editBuilder) => {
+            editBuilder.insert(vscode.window.activeTextEditor.selection.active, message.value.text);
+          });
+          break;
       }
     });
   });
