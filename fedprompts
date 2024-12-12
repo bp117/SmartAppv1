@@ -51,3 +51,33 @@ Specific Focus Areas for [SPECIFIC PACS MESSAGE TYPE]:
 [INSERT SPECIFIC MESSAGE TYPE DETAILS AND UNIQUE REQUIREMENTS]
 
 IMPORTANT: Validate the generated XML against the official ISO 20022 XSD schema to confirm full compliance.
+
+
+
+Please generate an XML document for a PACS.008.001.08 (Customer Credit Transfer) message using the comprehensive ISO 20022 generation guidelines we discussed.
+
+Specific Requirements:
+- Use a fictitious European bank scenario
+- Generate a single credit transfer transaction
+- Include realistic mock data for:
+  * Sender (Debtor)
+  * Receiver (Creditor)
+  * Transaction amount in EUR
+  * Payment purpose
+
+Example Context:
+- Transaction should simulate a cross-border payment from a business in Germany to a supplier in France
+- Use realistic but anonymized financial institution details
+- Ensure all mandatory fields are populated
+- Apply realistic business scenario constraints
+
+Additional Guidance:
+- Prioritize schema compliance
+- Include comments explaining data generation rationale
+- Demonstrate handling of optional vs. mandatory elements
+- Show proper namespace and schema references
+
+Preferred Output:
+- Full, valid XML document
+- Accompanying JSON/text explanation of data generation decisions
+- Demonstration of adherence to ISO 20022 PACS.008 message type rules
