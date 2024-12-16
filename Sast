@@ -1,0 +1,44 @@
+Here’s a detailed prompt you can use to perform a SAST (Static Application Security Testing) code review for the selected code:
+
+
+---
+
+Prompt for SAST Code Review:
+
+Analyze the provided code for potential security vulnerabilities, adhering to OWASP best practices and common SAST rules. Specifically:
+
+1. Injection Flaws: Identify any risks of SQL injection, command injection, or other code injection vulnerabilities. Suggest sanitization or parameterization if needed.
+
+
+2. Authentication and Authorization: Check for improper implementation of authentication mechanisms and insufficient role-based access controls.
+
+
+3. Input Validation: Verify if all user inputs are validated and sanitized to prevent XSS (Cross-Site Scripting), buffer overflows, and data integrity issues.
+
+
+4. Error Handling: Review error handling and logging practices to ensure no sensitive information is exposed in logs or error messages.
+
+
+5. Encryption and Secrets Management: Ensure sensitive data is encrypted and hardcoded credentials, API keys, or secrets are not present in the code.
+
+
+6. Dependency Management: Highlight outdated or vulnerable dependencies if referenced in the code.
+
+
+7. Secure Defaults: Confirm that secure configurations, like HTTPS enforcement and CSP (Content Security Policy), are in place.
+
+
+8. Concurrency Issues: Detect race conditions or concurrency issues that might lead to unexpected behaviors.
+
+
+9. Code Quality: Flag any insecure coding patterns, unused code blocks, or inefficient logic that could result in future vulnerabilities.
+
+
+
+Provide actionable feedback for each identified issue and recommendations to resolve them while maintaining the functional intent of the code.
+
+
+---
+
+You can tailor this prompt further based on the specific programming language or context of the application being reviewed. Let me know if you'd like a more focused version!
+
