@@ -1,9 +1,6 @@
 import pandas as pd
 import cx_Oracle
 
-# Constants
-GROUP_ID_RANGE = 50  # Customize the group ID range here
-
 # Oracle Database connection details (replace with your DB parameters)
 DB_HOST = "your_host"
 DB_PORT = "your_port"
@@ -22,7 +19,7 @@ def generate_group_ids(num_files, start_group_id, group_id_range):
         group_ids.append(group_id)
     return group_ids
 
-def process_and_verify_data(file_path, group_id_range=50):
+def process_and_verify_data(file_path, tranche_id, group_id_range):
     """
     Process the Excel data and verify results before database insertion.
     """
@@ -30,7 +27,7 @@ def process_and_verify_data(file_path, group_id_range=50):
     df = pd.read_excel(file_path)
 
     # Ensure required columns exist
-    required_columns = ['FACILITY_ID', 'TRANCHE_ID', 'FILE_NAME', 'FOLDER_PATH', 'DOC_TYPE']
+    required_columns = ['FACILITY_ID', 'FILE_NAME', 'FOLDER_PATH', 'DOC_TYPE']
     if not all(column in df.columns for column in required_columns):
         raise ValueError(f"Excel sheet must contain the following columns: {required_columns}")
 
@@ -50,10 +47,14 @@ def process_and_verify_data(file_path, group_id_range=50):
     df['GROUP_ID'] = group_ids
 
     # Add additional columns for database insertion
+    df['TRANCHE_ID'] = tranche_id  # Assign tranche ID
     df['STATUS'] = 'NOT_STARTED'  # Default status
     df['RETRY_COUNT'] = 0  # Default retry count
     df['EXEC_DURATION'] = None  # Placeholder for execution duration
     df['ERROR_DESC'] = None  # Placeholder for error description
+
+    # Assign a schedule (e.g., 'Daily', 'Weekly') based on your logic
+    df['SCHEDULE'] = 'Daily'  # Change this logic as needed
 
     # Verify Results
     print("=== Data Summary ===")
@@ -82,9 +83,9 @@ def insert_data_to_db(df):
     for _, row in df.iterrows():
         query = f"""
         INSERT INTO {TABLE_NAME} (
-            GROUP_ID, FACILITY_ID, TRANCHE_ID, FILE_NAME, DOC_TYPE, STATUS, RETRY_COUNT, EXEC_DURATION, ERROR_DESC
+            GROUP_ID, FACILITY_ID, TRANCHE_ID, FILE_NAME, DOC_TYPE, STATUS, RETRY_COUNT, EXEC_DURATION, ERROR_DESC, SCHEDULE
         ) VALUES (
-            :1, :2, :3, :4, :5, :6, :7, :8, :9
+            :1, :2, :3, :4, :5, :6, :7, :8, :9, :10
         )
         """
         cursor.execute(query, (
@@ -96,7 +97,8 @@ def insert_data_to_db(df):
             row['STATUS'],
             row['RETRY_COUNT'],
             row['EXEC_DURATION'],
-            row['ERROR_DESC']
+            row['ERROR_DESC'],
+            row['SCHEDULE']
         ))
 
     # Commit and close connection
@@ -109,8 +111,12 @@ if __name__ == "__main__":
     # Provide the path to your Excel sheet
     excel_file_path = "group_to_file_mapping.xlsx"
     
+    # Take user inputs for tranche ID and group ID range
+    tranche_id = int(input("Enter Tranche ID: "))
+    group_id_range = int(input("Enter Group ID Range: "))
+
     # Step 1: Process and verify data
-    verified_data = process_and_verify_data(excel_file_path, group_id_range=GROUP_ID_RANGE)
+    verified_data = process_and_verify_data(excel_file_path, tranche_id, group_id_range)
     
     # Step 2: Confirm before inserting into the database
     user_input = input("Do you want to insert the verified data into the database? (yes/no): ").strip().lower()
