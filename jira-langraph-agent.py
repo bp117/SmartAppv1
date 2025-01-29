@@ -1,43 +1,4 @@
 
-# Core dependencies
-langgraph>=0.0.15
-langchain-core>=0.1.17
-langchain>=0.1.0
-langchain-google-vertexai>=0.0.6
-
-# Google Cloud & Vertex AI
-google-cloud-aiplatform>=1.36.4
-vertexai>=0.0.1
-google-auth>=2.27.0
-google-cloud-storage>=2.14.0
-
-# Jira integration
-jira>=3.5.2
-
-# Git integration
-gitpython>=3.1.41
-
-# Browser automation
-playwright>=1.41.2
-
-# Utility packages
-python-dotenv>=1.0.0
-pydantic>=2.6.1
-typing-extensions>=4.9.0
-dataclasses-json>=0.6.3
-
-# JSON handling
-jsonschema>=4.21.1
-json5>=0.9.14
-
-# Optional but recommended for development
-pytest>=7.4.4
-black>=24.1.1
-flake8>=7.0.0
-mypy>=1.8.0
-
-# Logging and monitoring
-structlog>=24.1.0
 
 
 import os
