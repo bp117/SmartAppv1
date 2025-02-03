@@ -1,105 +1,150 @@
-import os
-import re
-import networkx as nx
+import sqlparse
+from networkx import DiGraph, draw, spring_layout
+import matplotlib.pyplot as plt
+from collections import defaultdict
 
-# Step 1: Parse SQL files and extract dependencies
+# Function to parse SQL files and extract object definitions
 def parse_sql_file(file_path):
     """
-    Parse a single SQL file and extract CREATE/INSERT statements.
-    Returns a dictionary of dependencies.
+    Parse an SQL file and extract object definitions (procedures, views, etc.).
+    Returns a dictionary mapping object names to their SQL definitions.
     """
     with open(file_path, 'r') as file:
         sql_content = file.read()
 
-    # Regular expressions to identify CREATE/INSERT statements
-    create_pattern = re.compile(r"CREATE\s+(?:TABLE|VIEW)\s+(\w+)", re.IGNORECASE)
-    insert_pattern = re.compile(r"INSERT\s+INTO\s+(\w+)\s+SELECT.*FROM\s+(\w+)", re.IGNORECASE)
-    select_pattern = re.compile(r"SELECT\s+.*\s+FROM\s+(\w+)", re.IGNORECASE)
+    # Use sqlparse to split the file into statements
+    statements = sqlparse.split(sql_content)
 
-    dependencies = []
-    
-    # Extract CREATE statements
-    for match in create_pattern.finditer(sql_content):
-        table_name = match.group(1)
-        dependencies.append(('CREATE', table_name))
+    objects = {}
+    for statement in statements:
+        parsed = sqlparse.parse(statement)
+        if not parsed:
+            continue
 
-    # Extract INSERT INTO ... SELECT FROM statements
-    for match in insert_pattern.finditer(sql_content):
-        target_table = match.group(1)
-        source_table = match.group(2)
-        dependencies.append(('INSERT', target_table, source_table))
+        stmt = parsed[0]
+        if stmt.get_type() in ['CREATE', 'REPLACE']:
+            # Extract the object name
+            obj_name = None
+            for token in stmt.tokens:
+                if token.ttype in sqlparse.tokens.Keyword and token.value.upper() in ['PROCEDURE', 'VIEW', 'FUNCTION']:
+                    # The next token should be the object name
+                    obj_name_token = stmt.token_next(stmt.token_index(token))
+                    if obj_name_token:
+                        obj_name = obj_name_token.value.strip()
+                        break
 
-    # Extract SELECT statements
-    for match in select_pattern.finditer(sql_content):
-        source_table = match.group(1)
-        dependencies.append(('SELECT', source_table))
+            if obj_name:
+                objects[obj_name] = statement.strip()
 
-    return dependencies
+    return objects
 
 
-# Step 2: Build a dependency graph
-def build_dependency_graph(directory):
+# Function to extract dependencies from SQL definitions
+def extract_dependencies(sql_definition):
     """
-    Parse all SQL files in the directory and build a dependency graph.
+    Extract dependencies (tables, columns, procedures) from a SQL definition.
+    Returns a list of dependent objects.
     """
-    graph = nx.DiGraph()
-    for root, _, files in os.walk(directory):
-        for file in files:
-            if file.endswith('.txt'):
-                file_path = os.path.join(root, file)
-                dependencies = parse_sql_file(file_path)
-                for dep in dependencies:
-                    if dep[0] == 'CREATE':
-                        graph.add_node(dep[1])  # Add table/view node
-                    elif dep[0] == 'INSERT':
-                        graph.add_edge(dep[2], dep[1])  # Source -> Target
-                    elif dep[0] == 'SELECT':
-                        graph.add_node(dep[1])  # Add source table node
-    return graph
+    dependencies = set()
+
+    # Parse the SQL statement
+    parsed = sqlparse.parse(sql_definition)[0]
+
+    # Traverse the parsed tokens to find table/column references
+    for token in parsed.flatten():
+        if token.ttype == sqlparse.tokens.Name and '.' in token.value:
+            dependencies.add(token.value.strip())  # Add table.column format
+
+        # Check for procedure calls
+        if token.match(sqlparse.tokens.Keyword, ['CALL', 'EXEC']):
+            proc_name_token = parsed.token_next(parsed.token_index(token))
+            if proc_name_token:
+                dependencies.add(proc_name_token.value.strip())
+
+    return list(dependencies)
 
 
-# Step 3: Find lineage using recursion
-def find_column_lineage(graph, target_column, current_table, visited=None):
+# Recursive function to trace lineage
+def trace_lineage(target_table, target_column, objects, visited=None, lineage=None, graph=None):
     """
-    Recursively find the lineage of a column starting from a given table.
+    Recursively trace the lineage of a column in a target table.
+    :param target_table: Name of the target table
+    :param target_column: Name of the target column
+    :param objects: Dictionary of parsed SQL objects
+    :param visited: Set of visited objects to avoid infinite recursion
+    :param lineage: List to store the lineage path
+    :param graph: NetworkX graph to visualize dependencies
+    :return: Lineage path as a list
     """
     if visited is None:
         visited = set()
+    if lineage is None:
+        lineage = []
+    if graph is None:
+        graph = DiGraph()
 
-    if current_table in visited:
-        return []  # Avoid cycles
+    key = f"{target_table}.{target_column}"
+    if key in visited:
+        return lineage  # Avoid infinite recursion
 
-    visited.add(current_table)
-    lineage = []
+    visited.add(key)
+    lineage.append(f"{target_table}.{target_column}")
 
-    # Check predecessors (tables/views that populate this table)
-    for predecessor in graph.predecessors(current_table):
-        lineage.append((predecessor, current_table))
-        lineage.extend(find_column_lineage(graph, target_column, predecessor, visited))
+    # Add node to the graph
+    graph.add_node(f"{target_table}.{target_column}")
 
-    return lineage
+    # Check if the target table exists in the objects
+    if target_table not in objects:
+        print(f"Table {target_table} not found in objects.")
+        return lineage
+
+    sql_definition = objects[target_table]
+
+    # Extract dependencies from the SQL definition
+    dependencies = extract_dependencies(sql_definition)
+
+    # Look for the target column in the dependencies
+    for dependency in dependencies:
+        dep_table, dep_column = dependency.split('.')
+
+        if dep_column == target_column:
+            # Add edge to the graph
+            graph.add_edge(f"{target_table}.{target_column}", f"{dep_table}.{dep_column}")
+
+            # Recursively trace the lineage for the dependent column
+            trace_lineage(dep_table, dep_column, objects, visited, lineage, graph)
+
+    return lineage, graph
 
 
-# Step 4: Main function to execute the lineage extraction
-def main(directory, target_column, start_table):
-    """
-    Main function to extract column lineage.
-    """
-    # Build the dependency graph
-    graph = build_dependency_graph(directory)
+# Main function to execute lineage tracing
+def main():
+    # Parse SQL files
+    file_paths = ['file1.sql', 'file2.sql']  # Replace with your SQL file paths
+    all_objects = {}
+    for file_path in file_paths:
+        all_objects.update(parse_sql_file(file_path))
 
-    # Find lineage starting from the specified table
-    lineage = find_column_lineage(graph, target_column, start_table)
+    # Define the target table and column
+    target_table = "sales_summary"
+    target_column = "total_sales"
 
-    print("Column Lineage:")
-    for source, target in lineage:
-        print(f"{source} -> {target}")
+    # Trace the lineage
+    lineage, graph = trace_lineage(target_table, target_column, all_objects)
+
+    # Print the lineage
+    print("Lineage Path:")
+    for step in lineage:
+        print(step)
+
+    # Visualize the lineage graph
+    if graph.number_of_nodes() > 0:
+        pos = spring_layout(graph)
+        plt.figure(figsize=(10, 8))
+        draw(graph, pos, with_labels=True, node_color='lightblue', edge_color='gray', font_size=10)
+        plt.title("Lineage Graph")
+        plt.show()
 
 
-# Example usage
 if __name__ == "__main__":
-    sql_directory = "path/to/sql/files"
-    target_column = "guarantor_nm"
-    start_table = "final_output_table"  # Replace with the table where the column is used
-
-    main(sql_directory, target_column, start_table)
+    main()
