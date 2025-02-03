@@ -1,69 +1,295 @@
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
                            QHBoxLayout, QTextEdit, QPushButton, QScrollArea, QLabel)
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, QTimer, QSize
-from PyQt5.QtGui import QPalette, QColor, QIcon
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, QTimer, QSize, QDateTime
+from PyQt5.QtGui import QPalette, QColor, QIcon, QFont
 import queue
 import time
 import os
 
+class LoadingDots(QLabel):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFixedHeight(30)
+        self.dots = ""
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_dots)
+        self.timer.start(500)  # Update every 500ms
+        self.setStyleSheet(
+            "QLabel {"
+            "color: #666666;"
+            "font-size: 24px;"
+            "font-weight: bold;"
+            "padding: 5px;"
+            "background-color: #e6e0f0;"  # Lighter purple shade
+            "border-radius: 15px;"
+            "margin: 5px;"
+            "}"
+        )
+
+    def update_dots(self):
+        self.dots = (self.dots + "." if len(self.dots) < 3 else "")
+        self.setText(self.dots)
+
+    def stop(self):
+        self.timer.stop()
+        self.deleteLater()
+
+class MessageBubble(QTextEdit):
+    def __init__(self, text, timestamp, parent=None):
+        super().__init__(parent)
+        self.setReadOnly(True)
+        self.setPlainText(text)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.setMinimumWidth(250)
+        self.setMaximumHeight(200)
+        
+        self.timestamp_label = QLabel(timestamp)
+        self.timestamp_label.setStyleSheet(
+            "QLabel {"
+            "color: #666666;"
+            "font-size: 10px;"
+            "margin-top: 2px;"
+            "}"
+        )
+        
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        doc_height = self.document().size().height()
+        if doc_height + 20 <= self.maximumHeight():
+            self.setFixedHeight(doc_height + 20)
+
 class MessageWidget(QWidget):
     def __init__(self, text, is_user=True, parent=None):
         super().__init__(parent)
-        layout = QHBoxLayout()
+        main_layout = QVBoxLayout()
+        main_layout.setSpacing(2)
         
-        # Create icon label
+        msg_layout = QHBoxLayout()
+        msg_layout.setContentsMargins(10, 5, 10, 0)
+        
         icon_label = QLabel()
-        icon_size = QSize(32, 32)
+        icon_size = QSize(24, 24)
         
-        # Set icons based on whether it's a user or bot message
         if is_user:
-            icon = QIcon('user_icon.png')  # Replace with your user icon path
+            icon = QIcon('user_icon.png')
             icon_label.setPixmap(icon.pixmap(icon_size))
         else:
-            icon = QIcon('bot_icon.png')  # Replace with your bot icon path
+            icon = QIcon('bot_icon.png')
             icon_label.setPixmap(icon.pixmap(icon_size))
         
         icon_label.setFixedSize(icon_size)
         
-        # Create message bubble
-        bubble = QTextEdit()
-        bubble.setReadOnly(True)
-        bubble.setText(text)
-        bubble.setMinimumWidth(200)
-        bubble.setMaximumWidth(400)
+        timestamp = QDateTime.currentDateTime().toString("hh:mm AP")
         
-        # Auto-adjust height based on content
-        doc_height = bubble.document().size().height()
-        bubble.setMinimumHeight(doc_height + 20)
-        bubble.setMaximumHeight(doc_height + 20)
+        bubble = MessageBubble(text, timestamp)
         
-        # Style the bubble
+        # Updated color scheme with purple shades
         bubble.setStyleSheet(
             "QTextEdit {"
-            "border-radius: 10px;"
-            "padding: 10px;"
-            f"background-color: {'#DCF8C6' if is_user else '#E8E8E8'};"
+            "border-radius: 15px;"
+            "padding: 12px;"
+            f"background-color: {'#d9d2e9' if is_user else '#e6e0f0'};"  # User: darker, Bot: lighter
+            "color: #202124;"
+            "font-size: 13px;"
+            "line-height: 1.4;"
+            "}"
+            "QScrollBar:vertical {"
+            "width: 8px;"
+            "background: transparent;"
+            "margin: 0px 0px 0px 0px;"
+            "}"
+            "QScrollBar::handle:vertical {"
+            "background: #b4a7d6;"  # Purple shade for scrollbar
+            "border-radius: 4px;"
+            "min-height: 20px;"
+            "}"
+            "QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {"
+            "height: 0px;"
+            "}"
+            "QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {"
+            "background: none;"
             "}"
         )
         
-        # Create container for bubble and add margin
-        bubble_container = QWidget()
-        bubble_layout = QHBoxLayout(bubble_container)
-        bubble_layout.setContentsMargins(0, 0, 0, 0)
-        bubble_layout.addWidget(bubble)
+        msg_layout.addWidget(icon_label)
+        msg_layout.addSpacing(8)
+        msg_layout.addWidget(bubble)
+        msg_layout.addStretch()
         
-        # Align messages to right for user, left for bot
-        if is_user:
-            layout.addStretch()
-            layout.addWidget(bubble_container)
-            layout.addWidget(icon_label)
-        else:
-            layout.addWidget(icon_label)
-            layout.addWidget(bubble_container)
-            layout.addStretch()
+        timestamp_layout = QHBoxLayout()
+        timestamp_layout.setContentsMargins(42, 0, 10, 5)
+        timestamp_label = QLabel(timestamp)
+        timestamp_label.setStyleSheet(
+            "QLabel {"
+            "color: #666666;"
+            "font-size: 10px;"
+            "}"
+        )
+        timestamp_layout.addWidget(timestamp_label)
+        timestamp_layout.addStretch()
+        
+        main_layout.addLayout(msg_layout)
+        main_layout.addLayout(timestamp_layout)
+        
+        self.setLayout(main_layout)
+        self.bubble = bubble
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        available_width = self.width() - 100
+        self.bubble.setMaximumWidth(min(available_width, 800))
+
+class ChatWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Chat Application")
+        self.setMinimumSize(600, 400)
+        
+        create_default_icons()
+        
+        self.input_queue = queue.Queue()
+        self.output_queue = queue.Queue()
+        
+        self.init_ui()
+        
+        self.worker = ChatWorker(self.input_queue, self.output_queue)
+        self.worker.response_ready.connect(self.handle_bot_response)
+        self.worker.start()
+        
+        self.loading_dots = None
+        
+    def init_ui(self):
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+        layout = QVBoxLayout(central_widget)
+        
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scroll_area.setStyleSheet(
+            "QScrollArea {"
+            "border: none;"
+            "background-color: white;"
+            "}"
+        )
+        
+        self.messages_widget = QWidget()
+        self.messages_layout = QVBoxLayout(self.messages_widget)
+        self.messages_layout.addStretch()
+        self.messages_widget.setStyleSheet(
+            "QWidget {"
+            "background-color: white;"
+            "}"
+        )
+        
+        self.scroll_area.setWidget(self.messages_widget)
+        layout.addWidget(self.scroll_area)
+        
+        input_layout = QHBoxLayout()
+        self.message_input = QTextEdit()
+        self.message_input.setMaximumHeight(100)
+        self.message_input.setStyleSheet(
+            "QTextEdit {"
+            "border: 1px solid #b4a7d6;"  # Purple border
+            "border-radius: 5px;"
+            "padding: 5px;"
+            "}"
+        )
+        
+        send_button = QPushButton("Send")
+        send_button.setStyleSheet(
+            "QPushButton {"
+            "background-color: #b4a7d6;"  # Purple background
+            "color: white;"
+            "border: none;"
+            "border-radius: 5px;"
+            "padding: 8px 16px;"
+            "}"
+            "QPushButton:hover {"
+            "background-color: #9982c7;"  # Darker purple on hover
+            "}"
+        )
+        send_button.clicked.connect(self.send_message)
+        
+        self.message_input.installEventFilter(self)
+        
+        input_layout.addWidget(self.message_input)
+        input_layout.addWidget(send_button)
+        layout.addLayout(input_layout)
+
+    def show_loading_indicator(self):
+        # Remove existing loading dots if any
+        if self.loading_dots:
+            self.loading_dots.stop()
+        
+        # Create new loading indicator
+        loading_widget = QWidget()
+        loading_layout = QHBoxLayout(loading_widget)
+        loading_layout.setContentsMargins(50, 0, 10, 0)  # Align with messages
+        
+        self.loading_dots = LoadingDots()
+        loading_layout.addWidget(self.loading_dots)
+        loading_layout.addStretch()
+        
+        # Add to messages layout
+        self.messages_layout.insertWidget(self.messages_layout.count() - 1, loading_widget)
+        self.scroll_to_bottom()
+
+    def hide_loading_indicator(self):
+        if self.loading_dots:
+            self.loading_dots.stop()
+            self.loading_dots = None
             
-        self.setLayout(layout)
+    def handle_bot_response(self, message):
+        self.hide_loading_indicator()
+        self.add_bot_message(message)
+
+    def send_message(self):
+        message = self.message_input.toPlainText().strip()
+        if message:
+            self.add_user_message(message)
+            self.message_input.clear()
+            self.input_queue.put(message)
+            self.show_loading_indicator()
+
+    # ... Rest of the ChatWindow methods remain the same ...
+
+class ChatWorker(QThread):
+    response_ready = pyqtSignal(str)
+    
+    def __init__(self, input_queue, output_queue):
+        super().__init__()
+        self.input_queue = input_queue
+        self.output_queue = output_queue
+        self.running = True
+        
+    def run(self):
+        while self.running:
+            try:
+                message = self.input_queue.get(timeout=0.1)
+                # Simulate longer processing time to show loading animation
+                time.sleep(2)
+                
+                responses = [
+                    f"I understand you're saying: {message}",
+                    f"That's interesting! Here's what I think about '{message}'...",
+                    f"Let me respond to your message: '{message}' with some thoughts...",
+                    f"Thanks for sharing! Regarding '{message}', I have a few points to discuss..."
+                ]
+                import random
+                response = random.choice(responses)
+                
+                self.output_queue.put(response)
+                self.response_ready.emit(response)
+                
+            except queue.Empty:
+                continue
+                
+    def stop(self):
+        self.running = False
+
 
 def create_default_icons():
     """Create default SVG icons if icon files don't exist"""
@@ -81,11 +307,9 @@ def create_default_icons():
         <rect x="35" y="60" width="30" height="5" fill="white"/>
     </svg>'''
     
-    # Save default icons if they don't exist
     if not os.path.exists('user_icon.png'):
         with open('user_icon.svg', 'w') as f:
             f.write(user_svg)
-        # Convert SVG to PNG using Qt
         app = QApplication.instance() or QApplication([])
         icon = QIcon('user_icon.svg')
         pixmap = icon.pixmap(QSize(32, 32))
@@ -95,137 +319,14 @@ def create_default_icons():
     if not os.path.exists('bot_icon.png'):
         with open('bot_icon.svg', 'w') as f:
             f.write(bot_svg)
-        # Convert SVG to PNG using Qt
         app = QApplication.instance() or QApplication([])
         icon = QIcon('bot_icon.svg')
         pixmap = icon.pixmap(QSize(32, 32))
         pixmap.save('bot_icon.png')
         os.remove('bot_icon.svg')
-
-class ChatWorker(QThread):
-    response_ready = pyqtSignal(str)
-    
-    def __init__(self, input_queue, output_queue):
-        super().__init__()
-        self.input_queue = input_queue
-        self.output_queue = output_queue
-        self.running = True
-        
-    def run(self):
-        while self.running:
-            try:
-                # Get message from input queue
-                message = self.input_queue.get(timeout=0.1)
-                
-                # Simulate bot processing (replace with actual bot logic)
-                time.sleep(1)  # Simulate processing time
-                response = f"Bot response to: {message}"
-                
-                # Send response through output queue
-                self.output_queue.put(response)
-                self.response_ready.emit(response)
-                
-            except queue.Empty:
-                continue
-                
-    def stop(self):
-        self.running = False
-
-class ChatWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Chat Application")
-        self.setMinimumSize(600, 400)
-        
-        # Create default icons if they don't exist
-        create_default_icons()
-        
-        # Create queues for communication
-        self.input_queue = queue.Queue()
-        self.output_queue = queue.Queue()
-        
-        # Initialize UI
-        self.init_ui()
-        
-        # Start worker thread
-        self.worker = ChatWorker(self.input_queue, self.output_queue)
-        self.worker.response_ready.connect(self.add_bot_message)
-        self.worker.start()
-        
-    def init_ui(self):
-        # Create central widget and layout
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
-        layout = QVBoxLayout(central_widget)
-        
-        # Create scroll area for messages
-        self.scroll_area = QScrollArea()
-        self.scroll_area.setWidgetResizable(True)
-        self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        
-        # Create widget to hold messages
-        self.messages_widget = QWidget()
-        self.messages_layout = QVBoxLayout(self.messages_widget)
-        self.messages_layout.addStretch()
-        
-        self.scroll_area.setWidget(self.messages_widget)
-        layout.addWidget(self.scroll_area)
-        
-        # Create input area
-        input_layout = QHBoxLayout()
-        self.message_input = QTextEdit()
-        self.message_input.setMaximumHeight(100)
-        send_button = QPushButton("Send")
-        send_button.clicked.connect(self.send_message)
-        
-        input_layout.addWidget(self.message_input)
-        input_layout.addWidget(send_button)
-        layout.addLayout(input_layout)
-        
-    def send_message(self):
-        message = self.message_input.toPlainText().strip()
-        if message:
-            # Add user message to chat
-            self.add_user_message(message)
-            
-            # Clear input field
-            self.message_input.clear()
-            
-            # Send message to worker thread
-            self.input_queue.put(message)
-            
-    def add_user_message(self, message):
-        self.add_message(message, is_user=True)
-        
-    def add_bot_message(self, message):
-        self.add_message(message, is_user=False)
-        
-    def add_message(self, message, is_user=True):
-        # Create and add message widget
-        message_widget = MessageWidget(message, is_user)
-        self.messages_layout.insertWidget(self.messages_layout.count() - 1, message_widget)
-        
-        # Scroll to bottom
-        QTimer.singleShot(100, self.scroll_to_bottom)
-        
-    def scroll_to_bottom(self):
-        self.scroll_area.verticalScrollBar().setValue(
-            self.scroll_area.verticalScrollBar().maximum()
-        )
-        
-    def closeEvent(self, event):
-        self.worker.stop()
-        self.worker.wait()
-        event.accept()
-
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    
-    # Set application style
     app.setStyle('Fusion')
-    
-    # Create and show window
     window = ChatWindow()
     window.show()
-    
     sys.exit(app.exec_())
