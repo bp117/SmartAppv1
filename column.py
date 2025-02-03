@@ -1,86 +1,55 @@
-import re
+import openai
 import pandas as pd
 
-# Define the target table and column for lineage extraction
+# Define OpenAI API Key (Replace with your actual API key)
+OPENAI_API_KEY = "your-api-key"
+
+# Define the target table and column
 TARGET_TABLE = "CNI_FACLTY_TO_CC"  # Modify as needed
 TARGET_COLUMN = "GUARANTOR_NM"  # Modify as needed
 
-# SQL file paths (update with actual paths)
-sql_file_paths = [
-    "path/to/sql_file1.sql",
-    "path/to/sql_file2.sql"
-]
+# SQL file path (update with actual path)
+sql_file_path = "path/to/your/sql_file.sql"
 
-# Define SQL patterns to extract table and column relationships
-INSERT_REGEX = re.compile(r"INSERT INTO\s+(\w+)\s*\((.*?)\)\s*SELECT\s+(.*?)\s+FROM\s+(\w+)", re.IGNORECASE)
-SELECT_REGEX = re.compile(r"SELECT\s+(.*?)\s+FROM\s+(\w+)", re.IGNORECASE)
-JOIN_REGEX = re.compile(r"JOIN\s+(\w+)\s+ON\s+(\w+\.\w+)\s*=\s*(\w+\.\w+)", re.IGNORECASE)
-
-def extract_sql_statements(sql_text):
-    """Extract SQL statements containing key lineage keywords."""
-    sql_keywords = ["CREATE PROCEDURE", "CREATE VIEW", "INSERT INTO", "SELECT", "UPDATE", "DELETE", "FROM", "JOIN", "WHERE", "CALL"]
-    return "\n".join([line.strip() for line in sql_text.split("\n") if any(keyword in line.upper() for keyword in sql_keywords)])
-
-def extract_column_lineage(sql_text, target_table, target_column):
-    """Extract lineage for the given target table and column."""
-    lineage_records = []
-    
-    for match in INSERT_REGEX.finditer(sql_text):
-        tgt_table, tgt_cols, src_cols, src_table = match.groups()
-        tgt_columns = [col.strip() for col in tgt_cols.split(",")]
-        src_columns = [col.strip() for col in src_cols.split(",")]
-
-        if target_table == tgt_table and target_column in tgt_columns:
-            src_index = tgt_columns.index(target_column)
-            lineage_records.append({
-                "target_table": tgt_table,
-                "target_column": target_column,
-                "source_table": src_table,
-                "source_column": src_columns[src_index],
-                "mapping_logic": "Direct Mapping"
-            })
-
-    for match in SELECT_REGEX.finditer(sql_text):
-        src_cols, src_table = match.groups()
-        src_columns = [col.strip() for col in src_cols.split(",")]
-        
-        if target_column in src_columns:
-            lineage_records.append({
-                "target_table": target_table,
-                "target_column": target_column,
-                "source_table": src_table,
-                "source_column": target_column,
-                "mapping_logic": "Direct Mapping"
-            })
-
-    for match in JOIN_REGEX.finditer(sql_text):
-        src_table, left_col, right_col = match.groups()
-
-        if f"{target_table}.{target_column}" in [left_col, right_col]:
-            source_column = left_col if right_col.endswith(target_column) else right_col
-            lineage_records.append({
-                "target_table": target_table,
-                "target_column": target_column,
-                "source_table": src_table,
-                "source_column": source_column.split(".")[1],
-                "mapping_logic": "Join Condition"
-            })
-
-    return lineage_records
-
-# Process each SQL file and extract lineage
-all_lineage_records = []
-for file_path in sql_file_paths:
-    print(f"Processing: {file_path}")
+# Function to read the SQL file
+def read_sql_file(file_path):
     with open(file_path, "r", encoding="utf-8", errors="ignore") as file:
-        sql_text = file.read()
-    
-    filtered_sql_text = extract_sql_statements(sql_text)
-    lineage_records = extract_column_lineage(filtered_sql_text, TARGET_TABLE, TARGET_COLUMN)
-    all_lineage_records.extend(lineage_records)
+        return file.read()
 
-# Convert lineage records to DataFrame
-df_lineage = pd.DataFrame(all_lineage_records)
+# Function to query GPT-4 for lineage extraction
+def get_column_lineage(sql_text, target_table, target_column):
+    prompt = f"""
+    You are an expert in SQL lineage analysis and data provenance. Your task is to analyze a given SQL file
+    containing stored procedures and views. Identify the lineage for the column '{target_column}' in the table '{target_table}'.
+    Trace the lineage back to the source tables and columns, including any joins, transformations, and procedures.
+
+    The SQL file contents are provided below:
+    {sql_text}
+
+    Output the lineage in the following structured format (CSV-like):
+    target_table,target_column,source_table,source_column,mapping_logic
+    """
+
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[{"role": "system", "content": "You are an expert in SQL lineage extraction."},
+                  {"role": "user", "content": prompt}],
+        api_key=OPENAI_API_KEY
+    )
+
+    return response["choices"][0]["message"]["content"]
+
+# Read SQL file
+sql_text = read_sql_file(sql_file_path)
+
+# Get column lineage from GPT-4
+lineage_text = get_column_lineage(sql_text, TARGET_TABLE, TARGET_COLUMN)
+
+# Convert extracted lineage to DataFrame
+lineage_lines = lineage_text.strip().split("\n")[1:]  # Skip the header
+lineage_records = [line.split(",") for line in lineage_lines]
+
+df_lineage = pd.DataFrame(lineage_records, columns=["target_table", "target_column", "source_table", "source_column", "mapping_logic"])
 
 # Save to CSV
 output_csv_path = "column_lineage.csv"
