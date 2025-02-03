@@ -1,7 +1,6 @@
 import sqlparse
 from networkx import DiGraph, draw, spring_layout
 import matplotlib.pyplot as plt
-from collections import defaultdict
 
 # Function to parse SQL files and extract object definitions
 def parse_sql_file(file_path):
@@ -27,9 +26,10 @@ def parse_sql_file(file_path):
             obj_name = None
             for token in stmt.tokens:
                 if token.ttype in sqlparse.tokens.Keyword and token.value.upper() in ['PROCEDURE', 'VIEW', 'FUNCTION']:
-                    # The next token should be the object name
                     obj_name_token = stmt.token_next(stmt.token_index(token))
-                    if obj_name_token:
+                    if isinstance(obj_name_token, tuple):
+                        obj_name_token = obj_name_token[1]  # Extract the actual token
+                    if obj_name_token and obj_name_token.ttype == sqlparse.tokens.Name:
                         obj_name = obj_name_token.value.strip()
                         break
 
@@ -58,8 +58,19 @@ def extract_dependencies(sql_definition):
         # Check for procedure calls
         if token.match(sqlparse.tokens.Keyword, ['CALL', 'EXEC']):
             proc_name_token = parsed.token_next(parsed.token_index(token))
+            if isinstance(proc_name_token, tuple):
+                proc_name_token = proc_name_token[1]
             if proc_name_token:
                 dependencies.add(proc_name_token.value.strip())
+
+        # Handle SELECT, INSERT, UPDATE statements
+        if token.ttype == sqlparse.tokens.Keyword and token.value.upper() in ['SELECT', 'INSERT', 'UPDATE']:
+            # Look for table references in the FROM clause or target table
+            from_clause = parsed.token_next(parsed.token_index(token))
+            while from_clause:
+                if from_clause.ttype == sqlparse.tokens.Name:
+                    dependencies.add(from_clause.value.strip())
+                from_clause = parsed.token_next(parsed.token_index(from_clause))
 
     return list(dependencies)
 
@@ -93,26 +104,20 @@ def trace_lineage(target_table, target_column, objects, visited=None, lineage=No
     # Add node to the graph
     graph.add_node(f"{target_table}.{target_column}")
 
-    # Check if the target table exists in the objects
-    if target_table not in objects:
-        print(f"Table {target_table} not found in objects.")
-        return lineage
+    # Search through all objects for references to the target table/column
+    for obj_name, sql_definition in objects.items():
+        dependencies = extract_dependencies(sql_definition)
 
-    sql_definition = objects[target_table]
+        # Look for the target column in the dependencies
+        for dependency in dependencies:
+            dep_table, dep_column = dependency.split('.') if '.' in dependency else (dependency, None)
 
-    # Extract dependencies from the SQL definition
-    dependencies = extract_dependencies(sql_definition)
+            if dep_table == target_table and (dep_column is None or dep_column == target_column):
+                # Add edge to the graph
+                graph.add_edge(f"{target_table}.{target_column}", f"{obj_name}.<definition>")
 
-    # Look for the target column in the dependencies
-    for dependency in dependencies:
-        dep_table, dep_column = dependency.split('.')
-
-        if dep_column == target_column:
-            # Add edge to the graph
-            graph.add_edge(f"{target_table}.{target_column}", f"{dep_table}.{dep_column}")
-
-            # Recursively trace the lineage for the dependent column
-            trace_lineage(dep_table, dep_column, objects, visited, lineage, graph)
+                # Recursively trace the lineage for the dependent object
+                trace_lineage(dep_table, dep_column or target_column, objects, visited, lineage, graph)
 
     return lineage, graph
 
