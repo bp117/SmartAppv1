@@ -1,191 +1,129 @@
+import pandas as pd
+import json
+import requests
+import gcp_utils
+from sqlglot import parse_one, exp
+
+def call_gemini(prompt):
+    api_endpoint = "..."  # Define the endpoint URL for Gemini API
+    token = gcp_utils.get_creds().token  # Fetches authentication token
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "text": prompt
+                    }
+                ],
+                "role": "user"
+            }
+        ]
+    }
+    response = requests.post(api_endpoint, headers=headers, data=json.dumps(data), verify=False)
+    return response
+
+def read_sql_files(file_paths):
+    """Reads and combines SQL text from multiple files."""
+    sql_text = ""
+    for file_path in file_paths:
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as file:
+            sql_text += f"-- SQL from {file_path}\n" + file.read() + "\n\n"
+    return sql_text
+
+def preprocess_sql(sql_text):
+    """Preprocess SQL to extract metadata and simplify structure."""
+    parsed = parse_one(sql_text)
+    tables = [table.name for table in parsed.find_all(exp.Table)]
+    columns = [col.alias_or_name for col in parsed.find_all(exp.Column)]
+    return {"tables": tables, "columns": columns}
+
 def get_column_lineage(sql_text, target_table, target_column):
+    """Sends SQL content and lineage extraction request to Gemini."""
     prompt = f"""
-    You are an expert SQL lineage analyzer with deep expertise in complex SQL stored procedures. Your task is to extract the complete column lineage for a specific target column from a specific target table from the SQL code provided below. The stored procedures can include advanced SQL constructs such as:
-    
-    - Volatile or temporary tables, CTEs, and derived tables.
-    - Multiple levels of table aliases and subquery nesting.
-    - Indirect column derivations (e.g., columns transformed by functions, expressions, or CASE statements).
-    - Complex join conditions and aggregations that transform data.
-    - Mixed usage of explicit column naming and implicit column propagation.
-    
-    Instructions:
-    1. Ignore all comments in the SQL code.
-    2. Identify and locate the target table "{target_table}" and the target column "{target_column}".
-    3. Trace the lineage of {target_column} by following every transformation step, including:
-       - Direct mappings (e.g., SELECT source_column AS {target_column}).
-       - Indirect mappings (e.g., SELECT UPPER(source_column), COALESCE(source_column, 'default')).
-       - Alias resolution in subqueries, temporary tables, or CTEs.
-       - Any intermediate transformations leading to the final derivation.
-    4. For every mapping step, extract the following details:
-       - target_table, target_column, source_db, source_table, source_column, mapping_logic.
-    5. If the target column is not found, output exactly "COLUMN NOT FOUND IN THE SQL PROCEDURE."
-    
-    Final Output:
-    Provide your result as CSV text with headers:
-    target_table, target_column, source_db, source_table, source_column, mapping_logic
-    
-    SQL Content:
+    Below is the SQL content extracted from multiple files:
     {sql_text}
+
+    Your task is to analyze the lineage of the column `{target_column}` in the table `{target_table}`. Follow these steps carefully:
+
+    1. **Identify the Target Column**: Locate the exact column `{target_column}` in the table `{target_table}`. If the column or table is not found in the SQL content, output "COLUMN NOT FOUND IN THE SQL PROCEDURE."
+
+    2. **Trace the Column's Derivation**:
+       - Analyze how `{target_column}` is populated. This may involve direct assignments, transformations, joins, subqueries, or derived columns.
+       - Account for all intermediate steps, including:
+         - Volatile/temporary tables created during the procedure.
+         - Aliases used for tables or columns.
+         - Indirect column derivations (e.g., columns derived from other columns).
+         - Nested subqueries or Common Table Expressions (CTEs).
+
+    3. **Map Source Tables and Columns**:
+       - Identify all source tables and columns that contribute to the value of `{target_column}`.
+       - Include the database/schema name if available.
+       - For each source column, describe the mapping logic (e.g., direct assignment, transformation, aggregation, etc.).
+
+    4. **Handle Edge Cases**:
+       - If `{target_column}` is derived from a volatile/temporary table, trace back to the original source tables and columns.
+       - If `{target_column}` is populated conditionally (e.g., via `CASE` statements), include the conditions in the mapping logic.
+       - If `{target_column}` is derived indirectly (e.g., through intermediate calculations), include all intermediate steps.
+
+    5. **Output Format**:
+       Provide the lineage information in CSV format with the following columns:
+       - `target_table`: The table containing the target column.
+       - `target_column`: The target column being analyzed.
+       - `source_db`: The database/schema of the source table (if applicable).
+       - `source_table`: The source table contributing to the target column.
+       - `source_column`: The source column contributing to the target column.
+       - `mapping_logic`: A clear description of how the source column maps to the target column.
+
+    6. **Additional Notes**:
+       - Ignore comments in the SQL code.
+       - Ensure 100% accuracy in mapping logic. If unsure about any part of the lineage, output "PARTIAL LINEAGE" and describe the ambiguity.
+
+    Provide the final output in CSV format.
     """
     responses = call_gemini(prompt)
     return responses
 
+def extract_csv_from_response(resp):
+    """Extracts CSV formatted content from the response."""
+    if resp.find(".csv") != -1:
+        i1 = resp.find(".csv")
+        i2 = i1 + resp[i1:].find("\n")
+        resp1 = resp[i1:i2]
+    return resp1
 
+def one_iter():
+    sql_text = read_sql_files(sql_files_sequence)
+    preprocessed_data = preprocess_sql(sql_text)
+    print("Preprocessed Data:", preprocessed_data)
 
+    responses = get_column_lineage(sql_text, TARGET_TABLE, TARGET_COLUMN).json()
+    lineage_text = responses["candidates"][0]["content"]["parts"][0]["text"]
+    extracted_csv_text = extract_csv_from_response(lineage_text)
+    print(extracted_csv_text)
 
+    lineage_lines = extracted_csv_text.strip().split("\n")
+    lineage_records = [line.split(",") for line in lineage_lines]
+    df_lineage = pd.DataFrame(
+        lineage_records,
+        columns=["target_table", "target_column", "source_db", "source_table", "source_column", "mapping_logic"]
+    )
+    output_csv_path = "multi_stored_proc_lineage.csv"
+    df_lineage.to_csv(output_csv_path, index=False)
+    print("\nExtracted Multi-Stored Procedure Lineage:")
+    print(df_lineage)
+    print(f"\nLineage saved to: {output_csv_path}")
+    return df_lineage
 
-import sqlparse
-from networkx import DiGraph, draw, spring_layout
-import matplotlib.pyplot as plt
+# Define the SQL files to process
+sql_files_sequence = [
+    "./GUARANTOR_NM/GUARANTOR_NM/SP_CNI_FACLTY_TO_CC.txt",
+    "./GUARANTOR_NM/GUARANTOR_NM/SP_CNI_GUARANTOR_LVT.txt"
+]
+TARGET_TABLE = "CNI_FACLTY_TO_CC"
+TARGET_COLUMN = "GUARANTOR_NM"
 
-# Function to parse SQL files and extract object definitions
-def parse_sql_file(file_path):
-    """
-    Parse an SQL file and extract object definitions (procedures, views, etc.).
-    Returns a dictionary mapping object names to their SQL definitions.
-    """
-    with open(file_path, 'r') as file:
-        sql_content = file.read()
-
-    # Use sqlparse to split the file into statements
-    statements = sqlparse.split(sql_content)
-
-    objects = {}
-    for statement in statements:
-        parsed = sqlparse.parse(statement)
-        if not parsed:
-            continue
-
-        stmt = parsed[0]
-        if stmt.get_type() in ['CREATE', 'REPLACE']:
-            # Extract the object name
-            obj_name = None
-            for token in stmt.tokens:
-                if token.ttype in sqlparse.tokens.Keyword and token.value.upper() in ['PROCEDURE', 'VIEW', 'FUNCTION']:
-                    obj_name_token = stmt.token_next(stmt.token_index(token))
-                    if isinstance(obj_name_token, tuple):
-                        obj_name_token = obj_name_token[1]  # Extract the actual token
-                    if obj_name_token and obj_name_token.ttype == sqlparse.tokens.Name:
-                        obj_name = obj_name_token.value.strip()
-                        break
-
-            if obj_name:
-                objects[obj_name] = statement.strip()
-
-    return objects
-
-
-# Function to extract dependencies from SQL definitions
-def extract_dependencies(sql_definition):
-    """
-    Extract dependencies (tables, columns, procedures) from a SQL definition.
-    Returns a list of dependent objects.
-    """
-    dependencies = set()
-
-    # Parse the SQL statement
-    parsed = sqlparse.parse(sql_definition)[0]
-
-    # Traverse the parsed tokens to find table/column references
-    for token in parsed.flatten():
-        if token.ttype == sqlparse.tokens.Name and '.' in token.value:
-            dependencies.add(token.value.strip())  # Add table.column format
-
-        # Check for procedure calls
-        if token.match(sqlparse.tokens.Keyword, ['CALL', 'EXEC']):
-            proc_name_token = parsed.token_next(parsed.token_index(token))
-            if isinstance(proc_name_token, tuple):
-                proc_name_token = proc_name_token[1]
-            if proc_name_token:
-                dependencies.add(proc_name_token.value.strip())
-
-        # Handle SELECT, INSERT, UPDATE statements
-        if token.ttype == sqlparse.tokens.Keyword and token.value.upper() in ['SELECT', 'INSERT', 'UPDATE']:
-            # Look for table references in the FROM clause or target table
-            from_clause = parsed.token_next(parsed.token_index(token))
-            while from_clause:
-                if from_clause.ttype == sqlparse.tokens.Name:
-                    dependencies.add(from_clause.value.strip())
-                from_clause = parsed.token_next(parsed.token_index(from_clause))
-
-    return list(dependencies)
-
-
-# Recursive function to trace lineage
-def trace_lineage(target_table, target_column, objects, visited=None, lineage=None, graph=None):
-    """
-    Recursively trace the lineage of a column in a target table.
-    :param target_table: Name of the target table
-    :param target_column: Name of the target column
-    :param objects: Dictionary of parsed SQL objects
-    :param visited: Set of visited objects to avoid infinite recursion
-    :param lineage: List to store the lineage path
-    :param graph: NetworkX graph to visualize dependencies
-    :return: Lineage path as a list
-    """
-    if visited is None:
-        visited = set()
-    if lineage is None:
-        lineage = []
-    if graph is None:
-        graph = DiGraph()
-
-    key = f"{target_table}.{target_column}"
-    if key in visited:
-        return lineage  # Avoid infinite recursion
-
-    visited.add(key)
-    lineage.append(f"{target_table}.{target_column}")
-
-    # Add node to the graph
-    graph.add_node(f"{target_table}.{target_column}")
-
-    # Search through all objects for references to the target table/column
-    for obj_name, sql_definition in objects.items():
-        dependencies = extract_dependencies(sql_definition)
-
-        # Look for the target column in the dependencies
-        for dependency in dependencies:
-            dep_table, dep_column = dependency.split('.') if '.' in dependency else (dependency, None)
-
-            if dep_table == target_table and (dep_column is None or dep_column == target_column):
-                # Add edge to the graph
-                graph.add_edge(f"{target_table}.{target_column}", f"{obj_name}.<definition>")
-
-                # Recursively trace the lineage for the dependent object
-                trace_lineage(dep_table, dep_column or target_column, objects, visited, lineage, graph)
-
-    return lineage, graph
-
-
-# Main function to execute lineage tracing
-def main():
-    # Parse SQL files
-    file_paths = ['file1.sql', 'file2.sql']  # Replace with your SQL file paths
-    all_objects = {}
-    for file_path in file_paths:
-        all_objects.update(parse_sql_file(file_path))
-
-    # Define the target table and column
-    target_table = "sales_summary"
-    target_column = "total_sales"
-
-    # Trace the lineage
-    lineage, graph = trace_lineage(target_table, target_column, all_objects)
-
-    # Print the lineage
-    print("Lineage Path:")
-    for step in lineage:
-        print(step)
-
-    # Visualize the lineage graph
-    if graph.number_of_nodes() > 0:
-        pos = spring_layout(graph)
-        plt.figure(figsize=(10, 8))
-        draw(graph, pos, with_labels=True, node_color='lightblue', edge_color='gray', font_size=10)
-        plt.title("Lineage Graph")
-        plt.show()
-
-
-if __name__ == "__main__":
-    main()
+df1 = one_iter()
