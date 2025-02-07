@@ -1,3 +1,39 @@
+def get_column_lineage(sql_text, target_table, target_column):
+    prompt = f"""
+    You are an expert SQL lineage analyzer with deep expertise in complex SQL stored procedures. Your task is to extract the complete column lineage for a specific target column from a specific target table from the SQL code provided below. The stored procedures can include advanced SQL constructs such as:
+    
+    - Volatile or temporary tables, CTEs, and derived tables.
+    - Multiple levels of table aliases and subquery nesting.
+    - Indirect column derivations (e.g., columns transformed by functions, expressions, or CASE statements).
+    - Complex join conditions and aggregations that transform data.
+    - Mixed usage of explicit column naming and implicit column propagation.
+    
+    Instructions:
+    1. Ignore all comments in the SQL code.
+    2. Identify and locate the target table "{target_table}" and the target column "{target_column}".
+    3. Trace the lineage of {target_column} by following every transformation step, including:
+       - Direct mappings (e.g., SELECT source_column AS {target_column}).
+       - Indirect mappings (e.g., SELECT UPPER(source_column), COALESCE(source_column, 'default')).
+       - Alias resolution in subqueries, temporary tables, or CTEs.
+       - Any intermediate transformations leading to the final derivation.
+    4. For every mapping step, extract the following details:
+       - target_table, target_column, source_db, source_table, source_column, mapping_logic.
+    5. If the target column is not found, output exactly "COLUMN NOT FOUND IN THE SQL PROCEDURE."
+    
+    Final Output:
+    Provide your result as CSV text with headers:
+    target_table, target_column, source_db, source_table, source_column, mapping_logic
+    
+    SQL Content:
+    {sql_text}
+    """
+    responses = call_gemini(prompt)
+    return responses
+
+
+
+
+
 import sqlparse
 from networkx import DiGraph, draw, spring_layout
 import matplotlib.pyplot as plt
