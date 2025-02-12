@@ -38,3 +38,7 @@ Despite securing an offer from Polaris, I chose teaching, because I believed in 
 Over time, I took on high-impact initiatives like the Tachyon GenAI platform, Spectral API linting, and Backstage adoption, always focusing on innovation with real-world impact. Becoming a Distinguished Engineer wasn’t just about technical expertise—it was about architecting solutions that matter, influencing change, and enabling others to grow.
 
 "Titles don’t define expertise—impact does."
+Using my engineering talents at Wells Fargo means being part of a mission that transcends technology—it’s about forging a bridge between innovation and trust. Every day, I have the privilege of designing solutions that not only advance our financial systems but also empower our customers to achieve their dreams. In this role, my work becomes a catalyst for transformation, ensuring that our innovations are both cutting-edge and built on a foundation of integrity and reliability.
+
+For me, it's an opportunity to harness the power of technology to drive meaningful change. At Wells Fargo, I see engineering as a tool to break down barriers, simplify complex challenges, and deliver impactful solutions that shape the future of finance. Whether it’s enhancing security, improving customer experience, or developing sustainable digital platforms, every project is a chance to contribute to something bigger—building a legacy of innovation that stands the test of time and touches lives in a profound way.
+
