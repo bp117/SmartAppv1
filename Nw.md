@@ -29,3 +29,12 @@ In our field, every breakthrough begins with a single, daring question. So ask b
 
 Thank you for celebrating National Engineers Week with me. Let’s continue to push boundaries, embrace innovation, and shape a future where every engineer has the power to make a lasting difference.
 
+"Your journey is not defined by where you start but by how relentlessly you push forward."
+
+My career path has been a testament to challenging stereotypes, embracing continuous learning, and driving meaningful impact. I began as a professor in an engineering college, at a time when teaching was seen as a fallback for those who couldn’t crack campus placements. But for me, it was a choice, not a compromise.
+
+Despite securing an offer from Polaris, I chose teaching, because I believed in mastering fundamentals and mentoring young minds. However, my passion for building real-world solutions led me into the tech industry, where I worked on AI, scalable architectures, and developer tooling.
+
+Over time, I took on high-impact initiatives like the Tachyon GenAI platform, Spectral API linting, and Backstage adoption, always focusing on innovation with real-world impact. Becoming a Distinguished Engineer wasn’t just about technical expertise—it was about architecting solutions that matter, influencing change, and enabling others to grow.
+
+"Titles don’t define expertise—impact does."
