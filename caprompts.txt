@@ -5,3 +5,13 @@ Explain what the code does in simple terms. Assume the audience is a beginner pr
 Please review and analyze the code and identify potential areas for improvement related to code smells, readability, maintainability, performance, security, etc. Do not list issues already addressed in the given code. Focus on providing up to 5 constructive suggestions that could make the code more robust, efficient, or align with best practices. For each suggestion, provide a brief explanation of the potential benefits. After listing any recommendations, summarize if you found notable opportunities to enhance the code quality overall or if the code generally follows sound design principles. If no issues found, reply "There are no errors."
 
 Review the shared context and configurations to identify the test framework and libraries in use. Then, generate a suite of multiple unit tests for the functions in the code using the detected test framework and libraries. Be sure to import the function being tested. Follow the same patterns as any shared context. Only add packages, imports, dependencies, and assertions if they are used in current-dir . Pay attention to the file path of each shared context to see if test for the given file or code already exists. If one exists, focus on generating new unit tests for uncovered cases. If none are detected, import common unit test libraries for the code. Focus on validating key functionality with simple and complete assertions. Only include mocks if one is detected in cody://current-dir . Before writing the tests, identify which test libraries and frameworks to import, e.g. "No new imports needed - using existing libs" or "Importing test framework that matches shared context usage" or "Importing the defined framework", etc. Then briefly summarize test coverage and any limitations. At the end, enclose the full completed code for the new unit tests, including all necessary imports, in a single markdown codeblock. No fragments or TODO. The new tests should validate expected functionality and cover edge cases for the selected code with all required imports, including importing the function being tested. Do not repeat existing tests.
+
+Generate a Mermaid sequence diagram showing the interaction flow between components/functions in [selected code/file]. Include:
+
+All key actors/participants (components, functions, external services)
+The sequence of method calls and data flow
+Important conditional logic or branching
+Return values and state changes
+Any async operations or callbacks
+Error handling paths if present
+Format the diagram using Mermaid sequence diagram syntax with clear labels and descriptive messages between participants. Focus on the main user interaction flow."
