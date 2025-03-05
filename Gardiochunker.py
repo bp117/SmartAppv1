@@ -180,9 +180,24 @@ class PDFProcessor:
             start_time = time.time()
             status_messages = []
             
-            # Read the uploaded file
-            filename = os.path.basename(pdf_file.name) if hasattr(pdf_file, 'name') else "uploaded_document.pdf"
-            file_content = pdf_file.read()
+            # Handle different types of input (file object, file path, etc.)
+            if isinstance(pdf_file, str):
+                # pdf_file is a file path
+                filename = os.path.basename(pdf_file)
+                with open(pdf_file, 'rb') as f:
+                    file_content = f.read()
+            elif hasattr(pdf_file, 'read') and callable(pdf_file.read):
+                # pdf_file is a file-like object
+                filename = os.path.basename(pdf_file.name) if hasattr(pdf_file, 'name') else "uploaded_document.pdf"
+                file_content = pdf_file.read()
+            elif hasattr(pdf_file, 'name') and isinstance(pdf_file.name, str):
+                # Gradio sometimes passes a NamedTemporaryFile or similar object
+                filename = os.path.basename(pdf_file.name)
+                with open(pdf_file.name, 'rb') as f:
+                    file_content = f.read()
+            else:
+                return None, None, f"Error: Invalid file input type: {type(pdf_file)}"
+                
             status_messages.append(f"File '{filename}' uploaded successfully.")
             
             # Initialize Document AI if not already done
