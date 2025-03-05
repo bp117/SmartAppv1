@@ -1,3 +1,5 @@
+
+
 import gradio as gr
 import json
 import os
@@ -483,4 +485,20 @@ def create_interface():
             with gr.Column(scale=2):
                 output_file = gr.File(label="Generated JSONL")
                 preview = gr.DataFrame(label="Preview (First 10 chunks)")
-                status = gr.Textbox(label="Status", lines
+                status = gr.Textbox(label="Status", lines=10)
+        
+        process_button.click(
+            processor.process_pdf,
+            inputs=[pdf_input],
+            outputs=[output_file, preview, status]
+        )
+    
+    return app
+
+# For local development
+if __name__ == "__main__":
+    app = create_interface()
+    app.launch()
+else:
+    # For deployment
+    app = create_interface()
