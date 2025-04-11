@@ -1,0 +1,300 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700">
+  <!-- Background -->
+  <rect width="900" height="700" fill="#f5f5f5"/>
+  
+  <!-- Title Box -->
+  <rect x="150" y="20" width="600" height="60" rx="10" fill="#4a86e8"/>
+  <text x="450" y="60" font-family="Arial, sans-serif" font-size="24" fill="white" text-anchor="middle" font-weight="bold">
+    Agentic AI vs. AI Agents
+  </text>
+  
+  <!-- Panel 1: Introduction -->
+  <rect x="50" y="100" width="250" height="250" rx="10" fill="white" stroke="#333" stroke-width="2"/>
+  <text x="175" y="130" font-family="Arial, sans-serif" font-size="18" fill="#333" text-anchor="middle" font-weight="bold">
+    Meet the Characters
+  </text>
+  
+  <!-- Robot Characters -->
+  <!-- Agentic AI Robot - FIXED MOUTH -->
+  <circle cx="125" cy="240" r="30" fill="#4a86e8" stroke="#333" stroke-width="2"/>
+  <circle cx="115" cy="230" r="5" fill="white"/>
+  <circle cx="135" cy="230" r="5" fill="white"/>
+  <path d="M115 250 Q125 260 135 250" stroke="#333" stroke-width="2" fill="none"/>
+
+  <text x="125" y="310" font-family="Arial, sans-serif" font-size="14" fill="#333" text-anchor="middle" font-weight="bold">
+    Agentic AI
+  </text>
+  
+  <!-- AI Agent Robot - FIXED MOUTH -->
+  <circle cx="225" cy="240" r="30" fill="#6aa84f" stroke="#333" stroke-width="2"/>
+  <circle cx="215" cy="230" r="5" fill="white"/>
+  <circle cx="235" cy="230" r="5" fill="white"/>
+  <path d="M215 250 Q225 260 235 250" stroke="#333" stroke-width="2" fill="none"/>
+
+  <text x="225" y="310" font-family="Arial, sans-serif" font-size="14" fill="#333" text-anchor="middle" font-weight="bold">
+    AI Agent
+  </text>
+  
+  <!-- Speech Bubbles -->
+  <path d="M125 160 Q125 145 140 144 L220 145 Q245 145 245 155 L245 175 Q245 205 220 185 L150 185 Q125 205 125 175 Z" fill="white" stroke="#333" stroke-width="1"/>
+  <text x="185" y="165" font-family="Arial, sans-serif" font-size="11" fill="#333" text-anchor="middle">
+    We look similar, but we 
+  </text>
+  <text x="185" y="180" font-family="Arial, sans-serif" font-size="11" fill="#333" text-anchor="middle">
+   work quite differently!
+  </text>
+  
+  <!-- Panel 2: Agentic AI -->
+  <rect x="325" y="100" width="250" height="250" rx="10" fill="white" stroke="#333" stroke-width="2"/>
+  <text x="450" y="130" font-family="Arial, sans-serif" font-size="18" fill="#333" text-anchor="middle" font-weight="bold">
+   Agentic AI
+  </text>
+  
+  <!-- Agentic AI Illustration - FIXED MOUTH -->
+  <circle cx="400" cy="200" r="30" fill="#4a86e8" stroke="#333" stroke-width="2"/>
+  <circle cx="390" cy="190" r="5" fill="white"/>
+  <circle cx="410" cy="190" r="5" fill="white"/>
+  <path d="M390 210 Q400 220 410 210" stroke="#333" stroke-width="2" fill="none"/>
+ 
+  
+  <!-- Multiple Thought Bubbles -->
+
+  
+  <!-- Inside thought bubble -->
+  <rect x="460" y="140" width="110" height="70" rx="5" fill="#e6f3ff" stroke="#4a86e8"/>
+  <text x="510" y="160" font-family="Arial, sans-serif" font-size="10" fill="#333" text-anchor="middle">
+    Goal: Write a report
+  </text>
+  <text x="510" y="175" font-family="Arial, sans-serif" font-size="10" fill="#333" text-anchor="middle">
+    Step 1: Research data
+  </text>
+  <text x="510" y="190" font-family="Arial, sans-serif" font-size="10" fill="#333" text-anchor="middle">
+    Step 2: Create outline
+  </text>
+  <text x="510" y="205" font-family="Arial, sans-serif" font-size="10" fill="#333" text-anchor="middle">
+    Step 3: Draft content
+  </text>
+    <circle cx="450" cy="205" r="9" fill="white" stroke="#333"/>
+  <circle cx="434" cy="210" r="7" fill="white" stroke="#333"/>
+  <circle cx="428" cy="215" r="5" fill="white" stroke="#333"/>
+  <!-- Caption -->
+  <rect x="335" y="280" width="230" height="60" rx="5" fill="#e6f0ff"/>
+  <text x="450" y="300" font-family="Arial, sans-serif" font-size="11" fill="#333" text-anchor="middle">
+    Agentic AI can reason about goals,
+  </text>
+  <text x="450" y="315" font-family="Arial, sans-serif" font-size="11" fill="#333" text-anchor="middle">
+    break tasks into steps, and make
+  </text>
+  <text x="450" y="330" font-family="Arial, sans-serif" font-size="11" fill="#333" text-anchor="middle">
+    decisions on its own!
+  </text>
+  
+  <!-- Panel 3: AI Agent System -->
+  <rect x="600" y="100" width="250" height="250" rx="10" fill="white" stroke="#333" stroke-width="2"/>
+  <text x="725" y="130" font-family="Arial, sans-serif" font-size="18" fill="#333" text-anchor="middle" font-weight="bold">
+    AI Agent
+  </text>
+  
+  <!-- AI Agent Illustration - FIXED MOUTH -->
+  <circle cx="675" cy="200" r="30" fill="#6aa84f" stroke="#333" stroke-width="2"/>
+  <circle cx="665" cy="190" r="5" fill="white"/>
+  <circle cx="685" cy="190" r="5" fill="white"/>
+  <path d="M665 210 Q675 220 685 210" stroke="#333" stroke-width="2" fill="none"/>
+
+  
+  <!-- API/Tool Connections -->
+  <rect x="755" y="170" width="60" height="20" rx="5" fill="#f1c232" stroke="#333"/>
+  <text x="785" y="185" font-family="Arial, sans-serif" font-size="12" fill="#333" text-anchor="middle">
+    Github
+  </text>
+  
+  <rect x="755" y="200" width="60" height="20" rx="5" fill="#f1c232" stroke="#333"/>
+  <text x="785" y="215" font-family="Arial, sans-serif" font-size="12" fill="#333" text-anchor="middle">
+    Email
+  </text>
+  
+  <rect x="755" y="230" width="60" height="20" rx="5" fill="#f1c232" stroke="#333"/>
+  <text x="785" y="245" font-family="Arial, sans-serif" font-size="12" fill="#333" text-anchor="middle">
+    Database
+  </text>
+  
+  <!-- Connection lines -->
+  <line x1="710" y1="180" x2="755" y2="180" stroke="#333" stroke-width="2"/>
+  <line x1="710" y1="210" x2="755" y2="210" stroke="#333" stroke-width="2"/>
+  <line x1="710" y1="240" x2="755" y2="240" stroke="#333" stroke-width="2"/>
+  
+  <!-- Caption -->
+  <rect x="610" y="280" width="230" height="60" rx="5" fill="#eaf6e6"/>
+  <text x="725" y="300" font-family="Arial, sans-serif" font-size="11" fill="#333" text-anchor="middle">
+    AI Agents are software entities that
+  </text>
+  <text x="725" y="315" font-family="Arial, sans-serif" font-size="11" fill="#333" text-anchor="middle">
+    can interact with external systems
+  </text>
+  <text x="725" y="330" font-family="Arial, sans-serif" font-size="11" fill="#333" text-anchor="middle">
+    and perform specific tasks!
+  </text>
+  
+  <!-- Panel 4: Key Difference -->
+  <rect x="50" y="370" width="250" height="250" rx="10" fill="white" stroke="#333" stroke-width="2"/>
+  <text x="175" y="400" font-family="Arial, sans-serif" font-size="18" fill="#333" text-anchor="middle" font-weight="bold">
+     Key Difference
+  </text>
+  
+  <!-- Split illustration -->
+  <line x1="175" y1="420" x2="175" y2="570" stroke="#333" stroke-width="2" stroke-dasharray="5,5"/>
+  
+  <!-- Agentic AI side - FIXED MOUTH -->
+  <circle cx="125" cy="470" r="25" fill="#4a86e8" stroke="#333" stroke-width="2"/>
+  <circle cx="115" cy="460" r="4" fill="white"/>
+  <circle cx="135" cy="460" r="4" fill="white"/>
+  <path d="M115 480 Q125 490 135 480" stroke="#333" stroke-width="2" fill="none"/>
+  
+  <text x="125" y="520" font-family="Arial, sans-serif" font-size="12" fill="#333" text-anchor="middle">
+    Focuses on
+  </text>
+  <text x="125" y="535" font-family="Arial, sans-serif" font-size="12" fill="#333" text-anchor="middle">
+    autonomous
+  </text>
+  <text x="125" y="550" font-family="Arial, sans-serif" font-size="12" fill="#333" text-anchor="middle">
+    reasoning
+  </text>
+  
+  <!-- AI Agent side - FIXED MOUTH -->
+  <circle cx="225" cy="470" r="25" fill="#6aa84f" stroke="#333" stroke-width="2"/>
+  <circle cx="215" cy="460" r="4" fill="white"/>
+  <circle cx="235" cy="460" r="4" fill="white"/>
+  <path d="M215 480 Q225 490 235 480" stroke="#333" stroke-width="2" fill="none"/>
+  
+  <text x="225" y="520" font-family="Arial, sans-serif" font-size="12" fill="#333" text-anchor="middle">
+    Focuses on
+  </text>
+  <text x="225" y="535" font-family="Arial, sans-serif" font-size="12" fill="#333" text-anchor="middle">
+    tool use &amp;
+  </text>
+  <text x="225" y="550" font-family="Arial, sans-serif" font-size="12" fill="#333" text-anchor="middle">
+    integration
+  </text>
+  
+  <!-- Speech Bubble -->
+  <path d="M125 420 Q125 406 130 405 L200 405 Q225 405 225 415 L225 435 Q225 445 200 445 L150 445 Q125 445 125 435 Z" fill="white" stroke="#333" stroke-width="1"/>
+  <text x="175" y="425" font-family="Arial, sans-serif" font-size="11" fill="#333" text-anchor="middle">
+    We have different
+  </text>
+  <text x="175" y="440" font-family="Arial, sans-serif" font-size="11" fill="#333" text-anchor="middle">
+    specialties!
+  </text>
+  
+  <!-- Panel 5: Complex Agent Systems -->
+  <rect x="325" y="370" width="250" height="250" rx="10" fill="white" stroke="#333" stroke-width="2"/>
+  <text x="450" y="400" font-family="Arial, sans-serif" font-size="18" fill="#333" text-anchor="middle" font-weight="bold">
+    Agent Systems
+  </text>
+  
+  <!-- Multi-agent system illustration -->
+  <rect x="350" y="420" width="200" height="130" rx="5" fill="#f3f3f3" stroke="#333"/>
+  
+  <!-- Agent 1 - FIXED MOUTH -->
+  <circle cx="380" cy="450" r="15" fill="#6aa84f" stroke="#333" stroke-width="1"/>
+  <circle cx="375" cy="445" r="3" fill="white"/>
+  <circle cx="385" cy="445" r="3" fill="white"/>
+  <path d="M375 455 Q380 460 385 455" stroke="#333" stroke-width="1" fill="none"/>
+  
+  <!-- Agent 2 - FIXED MOUTH -->
+  <circle cx="440" cy="450" r="15" fill="#6aa84f" stroke="#333" stroke-width="1"/>
+  <circle cx="435" cy="445" r="3" fill="white"/>
+  <circle cx="445" cy="445" r="3" fill="white"/>
+  <path d="M435 455 Q440 460 445 455" stroke="#333" stroke-width="1" fill="none"/>
+  
+  <!-- Agent 3 - FIXED MOUTH -->
+  <circle cx="500" cy="450" r="15" fill="#6aa84f" stroke="#333" stroke-width="1"/>
+  <circle cx="495" cy="445" r="3" fill="white"/>
+  <circle cx="505" cy="445" r="3" fill="white"/>
+  <path d="M495 455 Q500 460 505 455" stroke="#333" stroke-width="1" fill="none"/>
+  
+  <!-- Agent 4 - FIXED MOUTH -->
+  <circle cx="380" cy="500" r="15" fill="#6aa84f" stroke="#333" stroke-width="1"/>
+  <circle cx="375" cy="495" r="3" fill="white"/>
+  <circle cx="385" cy="495" r="3" fill="white"/>
+  <path d="M375 505 Q380 510 385 505" stroke="#333" stroke-width="1" fill="none"/>
+  
+  <!-- Agent 5 - FIXED MOUTH -->
+  <circle cx="440" cy="500" r="15" fill="#6aa84f" stroke="#333" stroke-width="1"/>
+  <circle cx="435" cy="495" r="3" fill="white"/>
+  <circle cx="445" cy="495" r="3" fill="white"/>
+  <path d="M435 505 Q440 510 445 505" stroke="#333" stroke-width="1" fill="none"/>
+  
+  <!-- Agent 6 - FIXED MOUTH -->
+  <circle cx="500" cy="500" r="15" fill="#6aa84f" stroke="#333" stroke-width="1"/>
+  <circle cx="495" cy="495" r="3" fill="white"/>
+  <circle cx="505" cy="495" r="3" fill="white"/>
+  <path d="M495 505 Q500 510 505 505" stroke="#333" stroke-width="1" fill="none"/>
+  
+  <!-- Connection lines -->
+  <line x1="380" y1="465" x2="380" y2="485" stroke="#333" stroke-dasharray="2,2"/>
+  <line x1="440" y1="465" x2="440" y2="485" stroke="#333" stroke-dasharray="2,2"/>
+  <line x1="500" y1="465" x2="500" y2="485" stroke="#333" stroke-dasharray="2,2"/>
+  <line x1="395" y1="450" x2="425" y2="450" stroke="#333" stroke-dasharray="2,2"/>
+  <line x1="455" y1="450" x2="485" y2="450" stroke="#333" stroke-dasharray="2,2"/>
+  <line x1="395" y1="500" x2="425" y2="500" stroke="#333" stroke-dasharray="2,2"/>
+  <line x1="455" y1="500" x2="485" y2="500" stroke="#333" stroke-dasharray="2,2"/>
+  
+  <!-- Caption -->
+  <rect x="335" y="560" width="230" height="50" rx="5" fill="#eaf6e6"/>
+  <text x="450" y="580" font-family="Arial, sans-serif" font-size="11" fill="#333" text-anchor="middle">
+    Complex systems can have multiple
+  </text>
+  <text x="450" y="595" font-family="Arial, sans-serif" font-size="11" fill="#333" text-anchor="middle">
+    agents working together!
+  </text>
+  
+  <!-- Panel 6: Conclusion -->
+  <rect x="600" y="370" width="250" height="250" rx="10" fill="white" stroke="#333" stroke-width="2"/>
+  <text x="725" y="400" font-family="Arial, sans-serif" font-size="18" fill="#333" text-anchor="middle" font-weight="bold">
+    In Practice
+  </text>
+  
+  <!-- Combined illustration -->
+  <rect x="650" y="420" width="150" height="100" rx="10" fill="#eff6fc" stroke="#4a86e8" stroke-width="2"/>
+  <circle cx="675" cy="445" r="15" fill="#4a86e8" stroke="#333" stroke-width="1"/>
+  <text x="712" y="450" font-family="Arial, sans-serif" font-size="12" fill="#333">
+    Agentic AI
+  </text>
+  <text x="715" y="470" font-family="Arial, sans-serif" font-size="10" fill="#333">
+    • Reasoning
+  </text>
+  <text x="715" y="485" font-family="Arial, sans-serif" font-size="10" fill="#333">
+    • Planning
+  </text>
+  <text x="715" y="500" font-family="Arial, sans-serif" font-size="10" fill="#333">
+    • Decision-making
+  </text>
+  
+  <rect x="650" y="530" width="150" height="70" rx="10" fill="#eaf6e6" stroke="#6aa84f" stroke-width="2"/>
+  <circle cx="675" cy="555" r="15" fill="#6aa84f" stroke="#333" stroke-width="1"/>
+  <text x="710" y="550" font-family="Arial, sans-serif" font-size="12" fill="#333">
+    AI Agent
+  </text>
+  <text x="712" y="570" font-family="Arial, sans-serif" font-size="10" fill="#333">
+    • API Integration
+  </text>
+  <text x="712" y="585" font-family="Arial, sans-serif" font-size="10" fill="#333">
+    • Tool Manipulation
+  </text>
+  
+  <!-- Caption -->
+  <path d="M680 470 L680 530" stroke="#333" stroke-width="1" stroke-dasharray="4,4"/>
+  <polygon points="645,500 635,490 635,510" fill="#333"/>
+  <text x="625" y="505" font-family="Arial, sans-serif" font-size="10" fill="#333" text-anchor="end">
+    Often work
+  </text>
+  <text x="625" y="520" font-family="Arial, sans-serif" font-size="10" fill="#333" text-anchor="end">
+    together!
+  </text>
+  
+  <!-- Footer -->
+  <rect x="150" y="640" width="600" height="40" rx="10" fill="#4a86e8"/>
+  <text x="450" y="665" font-family="Arial, sans-serif" font-size="15" fill="white" text-anchor="middle" font-weight="bold">
+    In modern AI systems, these capabilities often combine!
+  </text>
+</svg>
