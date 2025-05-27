@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Weaver - Complete UI Mockups</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .screen {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .screen:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+        
+        .screen-header {
+            background: linear-gradient(135deg, #2196F3, #21CBF3);
+            color: white;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .screen-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(180deg); }
+        }
+        
+        .screen-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .screen-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .screen-content {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #2196F3;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #2196F3, #21CBF3);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 2px solid #e1e5e9;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4caf50, #8bc34a);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336, #ff5722);
+            color: white;
+        }
+        
+        .grid {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .grid-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e1e5e9;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            border-color: #2196F3;
+            background: white;
+            transform: translateY(-2px);
+        }
+        
+        .card-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .card-content {
+            color: #6c757d;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-todo {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .status-progress {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+        
+        .status-done {
+            background: #e8f5e8;
+            color: #388e3c;
+        }
+        
+        .story-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .story-item {
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .story-item:hover {
+            border-color: #2196F3;
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.1);
+        }
+        
+        .story-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .story-id {
+            font-weight: 600;
+            color: #2196F3;
+        }
+        
+        .story-title {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .story-description {
+            color: #6c757d;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .ai-suggestion {
+            background: linear-gradient(135deg, #e8f5e8, #f3e5f5);
+            border: 2px solid #4caf50;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .ai-suggestion-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .ai-icon {
+            width: 24px;
+            height: 24px;
+            background: #4caf50;
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .prompt-editor {
+            background: #f8f9fa;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        
+        .prompt-textarea {
+            width: 100%;
+            min-height: 120px;
+            border: none;
+            background: transparent;
+            resize: vertical;
+            font-family: monospace;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .prompt-textarea:focus {
+            outline: none;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e1e5e9;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .tab.active {
+            border-bottom-color: #2196F3;
+            color: #2196F3;
+        }
+        
+        .tab:hover {
+            background: #f8f9fa;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .prompt-tab-content {
+            display: none;
+        }
+        
+        .prompt-tab-content.active {
+            display: block;
+        }
+        
+        .template-section {
+            display: none;
+        }
+        
+        .template-section.active {
+            display: block;
+        }
+        
+        .sidebar {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #e1e5e9;
+        }
+        
+        .sidebar-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e1e5e9;
+        }
+        
+        .metric:last-child {
+            border-bottom: none;
+        }
+        
+        .metric-label {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .metric-value {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e1e5e9;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            transition: width 0.3s ease;
+        }
+        
+        .navigation {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        
+        .nav-item {
+            display: block;
+            padding: 8px 16px;
+            color: #333;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .nav-item:hover {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .approval-item {
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .approval-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .attachment-item {
+            transition: all 0.3s ease;
+        }
+        
+        .attachment-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .navigation {
+                position: static;
+                margin-bottom: 20px;
+            }
+            
+            .screen-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navigation">
+        <a href="#setup" class="nav-item">🔧 Setup</a>
+        <a href="#dashboard" class="nav-item">📊 Dashboard</a>
+        <a href="#stories" class="nav-item">📝 Stories</a>
+        <a href="#prompts" class="nav-item">🤖 AI Prompts</a>
+        <a href="#create" class="nav-item">➕ Create</a>
+        <a href="#approval" class="nav-item">🔍 Approvals</a>
+        <a href="#attachments" class="nav-item">📎 Attachments</a>
+        <a href="#review" class="nav-item">✅ Review</a>
+    </div>
+
+    <div class="container">
+        <!-- Setup Screen -->
+        <div id="setup" class="screen">
+            <div class="screen-header">
+                <h1 class="screen-title">🚀 Welcome to Story Weaver</h1>
+                <p class="screen-subtitle">Connect your Jira workspace and start refining stories with AI</p>
+            </div>
+            <div class="screen-content">
+                <div class="grid grid-2">
+                    <div>
+                        <h3 style="margin-bottom: 20px; color: #333;">Jira Connection Setup</h3>
+                        <div class="form-group">
+                            <label class="form-label">Jira URL</label>
+                            <input type="text" class="form-input" placeholder="https://your-company.atlassian.net" value="https://acme-corp.atlassian.net">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">User ID / Email</label>
+                            <input type="email" class="form-input" placeholder="your.email@company.com" value="john.doe@acme-corp.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">API Token</label>
+                            <input type="password" class="form-input" placeholder="••••••••••••••••" value="ATATxxxxxxxxxxxxxx">
+                            <small style="color: #6c757d; font-size: 12px;">Generate from Jira Account Settings → Security → API tokens</small>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%; margin-top: 16px;">Test Connection & Continue</button>
+                    </div>
+                    <div>
+                        <h3 style="margin-bottom: 20px; color: #333;">Quick Start Guide</h3>
+                        <div class="card">
+                            <div class="card-title">1. Connect Jira</div>
+                            <div class="card-content">Enter your Jira workspace details to establish secure connection</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">2. Configure JQL</div>
+                            <div class="card-content">Customize queries to pull relevant stories for your product</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">3. AI-Powered Refinement</div>
+                            <div class="card-content">Use pre-built prompts or create custom ones for story analysis</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">4. Create & Manage</div>
+                            <div class="card-content">Generate new stories, features, and epics with AI assistance</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Screen -->
+        <div id="dashboard" class="screen">
+            <div class="screen-header">
+                <h1 class="screen-title">📊 Product Dashboard</h1>
+                <p class="screen-subtitle">Overview of your stories, features, and AI insights</p>
+            </div>
+            <div class="screen-content">
+                <div class="grid grid-3">
+                    <div class="card">
+                        <div class="card-title">Stories Overview</div>
+                        <div class="metric">
+                            <span class="metric-label">Total Stories</span>
+                            <span class="metric-value">142</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Ready for Sprint</span>
+                            <span class="metric-value">23</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Need Refinement</span>
+                            <span class="metric-value">18</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%;"></div>
+                        </div>
+                        <small style="color: #6c757d;">65% stories refined</small>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">AI Insights</div>
+                        <div class="metric">
+                            <span class="metric-label">Stories Analyzed</span>
+                            <span class="metric-value">89</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Suggestions Made</span>
+                            <span class="metric-value">156</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Accepted</span>
+                            <span class="metric-value">134</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 86%;"></div>
+                        </div>
+                        <small style="color: #6c757d;">86% suggestion acceptance</small>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Recent Activity</div>
+                        <div style="font-size: 13px; line-height: 1.6;">
+                            <div style="margin-bottom: 8px;">
+                                <strong>2h ago:</strong> 3 stories refined
+                            </div>
+                            <div style="margin-bottom: 8px;">
+                                <strong>4h ago:</strong> Epic "User Authentication" created
+                            </div>
+                            <div style="margin-bottom: 8px;">
+                                <strong>1d ago:</strong> 12 acceptance criteria generated
+                            </div>
+                            <div>
+                                <strong>2d ago:</strong> Sprint planning completed
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ai-suggestion">
+                    <div class="ai-suggestion-header">
+                        <div class="ai-icon">✨</div>
+                        <strong>AI Recommendation</strong>
+                    </div>
+                    <p>Based on your current backlog, I suggest prioritizing the refinement of 8 user authentication stories. They have high business value but lack detailed acceptance criteria. Would you like me to help refine them?</p>
+                    <div style="margin-top: 12px;">
+                        <button class="btn btn-primary">Start Refinement</button>
+                        <button class="btn btn-secondary">View Details</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stories Management Screen -->
+        <div id="stories" class="screen">
+            <div class="screen-header">
+                <h1 class="screen-title">📝 Stories Management</h1>
+                <p class="screen-subtitle">Refine, analyze, and manage your product stories</p>
+            </div>
+            <div class="screen-content">
+                <div class="grid grid-2">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3>Current Stories</h3>
+                            <button class="btn btn-primary">Refresh from Jira</button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">JQL Filter</label>
+                            <input type="text" class="form-input" value="project = ACME AND type = Story AND status != Done" placeholder="Enter JQL query">
+                        </div>
+
+                        <div class="story-list">
+                            <div class="story-item">
+                                <div class="story-header">
+                                    <span class="story-id">ACME-124</span>
+                                    <span class="status-badge status-todo">To Do</span>
+                                </div>
+                                <div class="story-title">User login with social media accounts</div>
+                                <div class="story-description">As a user, I want to login using my Google or Facebook account so that I can access the platform quickly...</div>
+                                <div style="margin-top: 12px;">
+                                    <button class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">Analyze</button>
+                                    <button class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">Refine</button>
+                                </div>
+                            </div>
+
+                            <div class="story-item">
+                                <div class="story-header">
+                                    <span class="story-id">ACME-125</span>
+                                    <span class="status-badge status-progress">In Progress</span>
+                                </div>
+                                <div class="story-title">Password reset functionality</div>
+                                <div class="story-description">As a user, I want to reset my password via email so that I can regain access to my account...</div>
+                                <div style="margin-top: 12px;">
+                                    <button class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">Analyze</button>
+                                    <button class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">Refine</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar">
+                        <h3 class="sidebar-title">Story Analysis</h3>
+                        <div style="margin-bottom: 20px;">
+                            <strong>Selected Story:</strong> ACME-124
+                        </div>
+                        
+                        <div class="ai-suggestion">
+                            <div class="ai-suggestion-header">
+                                <div class="ai-icon">🔍</div>
+                                <strong>AI Analysis</strong>
+                            </div>
+                            <p><strong>Quality Score:</strong> 6/10</p>
+                            <p style="margin: 8px 0;"><strong>Issues Found:</strong></p>
+                            <ul style="margin-left: 20px; font-size: 14px;">
+                                <li>Missing acceptance criteria</li>
+                                <li>Vague user persona</li>
+                                <li>No edge cases defined</li>
+                            </ul>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <button class="btn btn-primary" style="width: 100%; margin-bottom: 8px;">Apply AI Suggestions</button>
+                            <button class="btn btn-secondary" style="width: 100%;">Generate Acceptance Criteria</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Prompts Configuration -->
+        <div id="prompts" class="screen">
+            <div class="screen-header">
+                <h1 class="screen-title">🤖 AI Prompts Configuration</h1>
+                <p class="screen-subtitle">Customize and manage AI prompts for different story operations</p>
+            </div>
+            <div class="screen-content">
+                <div class="tabs">
+                    <div class="tab active" data-tab="rating">Story Rating</div>
+                    <div class="tab" data-tab="refinement">Story Refinement</div>
+                    <div class="tab" data-tab="creation">Story Creation</div>
+                    <div class="tab" data-tab="feature">Feature Creation</div>
+                    <div class="tab" data-tab="epic">Epic Creation</div>
+                </div>
+
+                <div class="grid grid-2">
+                    <div>
+                        <!-- Story Rating Tab Content -->
+                        <div id="rating-prompt-tab" class="prompt-tab-content active">
+                            <h3 style="margin-bottom: 16px;">Story Rating Prompt</h3>
+                            <div class="prompt-editor">
+                                <textarea class="prompt-textarea">Analyze the following user story and rate it on a scale of 1-10 based on these criteria:
+
+1. Clarity and completeness of user story format
+2. Presence and quality of acceptance criteria
+3. Testability and measurability
+4. Business value alignment
+5. Technical feasibility considerations
+
+User Story: {story_content}
+
+Provide:
+- Overall rating (1-10)
+- Score breakdown for each criteria
+- Specific improvement suggestions
+- Missing elements that should be added
+- Potential risks or dependencies</textarea>
+                            </div>
+                            <div style="margin-top: 16px;">
+                                <button class="btn btn-primary">Save Prompt</button>
+                                <button class="btn btn-secondary">Reset to Default</button>
+                                <button class="btn btn-secondary">Test Prompt</button>
+                            </div>
+                        </div>
+
+                        <!-- Story Refinement Tab Content -->
+                        <div id="refinement-prompt-tab" class="prompt-tab-content">
+                            <h3 style="margin-bottom: 16px;">Story Refinement Prompt</h3>
+                            <div class="prompt-editor">
+                                <textarea class="prompt-textarea">Refine the following user story to improve its quality and completeness:
+
+Original Story: {story_content}
+
+Please enhance the story by:
+1. Improving clarity and user story format
+2. Adding or refining acceptance criteria
+3. Identifying edge cases and error scenarios
+4. Suggesting appropriate story points estimation
+5. Adding relevant tags and labels
+6. Identifying dependencies and risks
+
+Provide the refined story in a structured format.</textarea>
+                            </div>
+                            <div style="margin-top: 16px;">
+                                <button class="btn btn-primary">Save Prompt</button>
+                                <button class="btn btn-secondary">Reset to Default</button>
+                                <button class="btn btn-secondary">Test Prompt</button>
+                            </div>
+                        </div>
+
+                        <!-- Story Creation Tab Content -->
+                        <div id="creation-prompt-tab" class="prompt-tab-content">
+                            <h3 style="margin-bottom: 16px;">Story Creation Prompt</h3>
+                            <div class="prompt-editor">
+                                <textarea class="prompt-textarea">Create a new user story based on the following requirements:
+
+Feature Context: {feature_context}
+User Persona: {user_persona}
+Functionality Description: {story_description}
+Business Goal: {business_goal}
+
+Generate a complete user story including:
+1. Well-formatted user story statement
+2. Detailed acceptance criteria
+3. Definition of done
+4. Story point estimation
+5. Relevant tags and labels</textarea>
+                            </div>
+                            <div style="margin-top: 16px;">
+                                <button class="btn btn-primary">Save Prompt</button>
+                                <button class="btn btn-secondary">Reset to Default</button>
+                                <button class="btn btn-secondary">Test Prompt</button>
+                            </div>
+                        </div>
+
+                        <!-- Feature Creation Tab Content -->
+                        <div id="feature-prompt-tab" class="prompt-tab-content">
+                            <h3 style="margin-bottom: 16px;">Feature Creation Prompt</h3>
+                            <div class="prompt-editor">
+                                <textarea class="prompt-textarea">Create a comprehensive feature specification:
+
+Feature Name: {feature_name}
+Description: {feature_description}
+Target Users: {target_users}
+Success Metrics: {success_metrics}
+
+Generate a complete feature breakdown including:
+1. Feature overview and objectives
+2. User stories breakdown
+3. Non-functional requirements
+4. Technical considerations
+5. Success metrics and KPIs</textarea>
+                            </div>
+                            <div style="margin-top: 16px;">
+                                <button class="btn btn-primary">Save Prompt</button>
+                                <button class="btn btn-secondary">Reset to Default</button>
+                                <button class="btn btn-secondary">Test Prompt</button>
+                            </div>
+                        </div>
+
+                        <!-- Epic Creation Tab Content -->
+                        <div id="epic-prompt-tab" class="prompt-tab-content">
+                            <h3 style="margin-bottom: 16px;">Epic Creation Prompt</h3>
+                            <div class="prompt-editor">
+                                <textarea class="prompt-textarea">Create a comprehensive epic specification:
+
+Epic Name: {epic_name}
+Business Objective: {business_objective}
+Target Outcome: {target_outcome}
+Stakeholders: {stakeholders}
+
+Generate a complete epic structure including:
+1. Epic vision and business case
+2. Success criteria and metrics
+3. Feature breakdown
+4. High-level user journey
+5. Implementation roadmap</textarea>
+                            </div>
+                            <div style="margin-top: 16px;">
+                                <button class="btn btn-primary">Save Prompt</button>
+                                <button class="btn btn-secondary">Reset to Default</button>
+                                <button class="btn btn-secondary">Test Prompt</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="margin-bottom: 16px;">Predefined Templates</h3>
+                        
+                        <!-- Rating Templates -->
+                        <div id="rating-templates" class="template-section active">
+                            <div class="card">
+                                <div class="card-title">Quick Rating</div>
+                                <div class="card-content">Fast assessment focusing on story readiness for development</div>
+                                <button class="btn btn-secondary" style="margin-top: 8px; font-size: 12px;">Load Template</button>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">Detailed Analysis</div>
+                                <div class="card-content">Comprehensive evaluation with business impact assessment</div>
+                                <button class="btn btn-secondary" style="margin-top: 8px; font-size: 12px;">Load Template</button>
+                            </div>
+                        </div>
+
+                        <!-- Refinement Templates -->
+                        <div id="refinement-templates" class="template-section">
+                            <div class="card">
+                                <div class="card-title">Basic Refinement</div>
+                                <div class="card-content">Standard story improvement with acceptance criteria focus</div>
+                                <button class="btn btn-secondary" style="margin-top: 8px; font-size: 12px;">Load Template</button>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">INVEST Criteria</div>
+                                <div class="card-content">Refinement ensuring stories meet INVEST principles</div>
+                                <button class="btn btn-secondary" style="margin-top: 8px; font-size: 12px;">Load Template</button>
+                            </div>
+                        </div>
+
+                        <!-- Creation Templates -->
+                        <div id="creation-templates" class="template-section">
+                            <div class="card">
+                                <div class="card-title">Standard User Story</div>
+                                <div class="card-content">Classic user story format with standard acceptance criteria</div>
+                                <button class="btn btn-secondary" style="margin-top: 8px; font-size: 12px;">Load Template</button>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">BDD Style</div>
+                                <div class="card-content">Behavior-driven development focused story creation</div>
+                                <button class="btn btn-secondary" style="margin-top: 8px; font-size: 12px;">Load Template</button>
+                            </div>
+                        </div>
+
+                        <!-- Feature Templates -->
+                        <div id="feature-templates" class="template-section">
+                            <div class="card">
+                                <div class="card-title">User-Facing Feature</div>
+                                <div class="card-content">Template for customer-facing features with UX focus</div>
+                                <button class="btn btn-secondary" style="margin-top: 8px; font-size: 12px;">Load Template</button>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">API Feature</div>
+                                <div class="card-content">Backend feature template for API development</div>
+                                <button class="btn btn-secondary" style="margin-top: 8px; font-size: 12px;">Load Template</button>
+                            </div>
+                        </div>
+
+                        <!-- Epic Templates -->
+                        <div id="epic-templates" class="template-section">
+                            <div class="card">
+                                <div class="card-title">Customer Journey Epic</div>
+                                <div class="card-content">Epic template focused on end-to-end customer experience</div>
+                                <button class="btn btn-secondary" style="margin-top: 8px; font-size: 12px;">Load Template</button>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">Platform Epic</div>
+                                <div class="card-content">Infrastructure and platform development epic template</div>
+                                <button class="btn btn-secondary" style="margin-top: 8px; font-size: 12px;">Load Template</button>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <h4 style="margin-bottom: 12px;">Variables Available</h4>
+                            <div style="font-family: monospace; font-size: 12px; background: #f8f9fa; padding: 12px; border-radius: 6px;">
+                                {story_content} - Full story description<br>
+                                {story_id} - Jira ticket ID<br>
+                                {story_status} - Current status<br>
+                                {assignee} - Assigned developer<br>
+                                {epic_name} - Parent epic name<br>
+                                {sprint} - Current sprint<br>
+                                {story_points} - Estimated points
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create New Content Screen -->
+        <div id="create" class="screen">
+            <div class="screen-header">
+                <h1 class="screen-title">➕ Create New Content</h1>
+                <p class="screen-subtitle">Generate stories, features, and epics with AI assistance</p>
+            </div>
+            <div class="screen-content">
+                <div class="tabs">
+                    <div class="tab active" data-create-tab="story">New Story</div>
+                    <div class="tab" data-create-tab="feature">New Feature</div>
+                    <div class="tab" data-create-tab="epic">New Epic</div>
+                    <div class="tab" data-create-tab="feature-stories">Feature Stories</div>
+                </div>
+
+                <div class="grid grid-2">
+                    <div>
+                        <!-- New Story Tab -->
+                        <div id="story-tab-content" class="tab-content active">
+                            <h3 style="margin-bottom: 20px;">Story Generation</h3>
+                            <div class="form-group">
+                                <label class="form-label">Epic/Feature Context</label>
+                                <select class="form-input">
+                                    <option>User Authentication Epic</option>
+                                    <option>Dashboard Analytics Feature</option>
+                                    <option>Payment Processing Epic</option>
+                                    <option>Mobile App Feature</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">User Persona</label>
+                                <select class="form-input">
+                                    <option>End User</option>
+                                    <option>Admin User</option>
+                                    <option>Product Manager</option>
+                                    <option>Developer</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Story Description</label>
+                                <textarea class="form-input" style="min-height: 100px;" placeholder="Describe what functionality you want to create...">I need a story for users to be able to view their login history and see when and where they last logged in from</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Business Goal</label>
+                                <textarea class="form-input" style="min-height: 60px;" placeholder="What business value should this provide?">Improve user security awareness and trust by providing transparency about account access</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">📎 Include Attachments as Context</label>
+                                <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-top: 8px;">
+                                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                        <input type="checkbox" checked style="margin-right: 8px;">
+                                        <span style="font-size: 14px;">Security Requirements.pdf</span>
+                                        <span style="margin-left: auto; font-size: 12px; color: #666;">AI analyzed</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center;">
+                                        <input type="checkbox" style="margin-right: 8px;">
+                                        <span style="font-size: 14px;">📤 Upload new attachment</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid grid-2" style="gap: 12px; margin-top: 16px;">
+                                <button class="btn btn-secondary" style="width: 100%;">Generate Story with AI</button>
+                                <button class="btn btn-primary" style="width: 100%;">Generate & Create in Jira</button>
+                            </div>
+                        </div>
+
+                        <!-- New Feature Tab -->
+                        <div id="feature-tab-content" class="tab-content">
+                            <h3 style="margin-bottom: 20px;">Feature Generation</h3>
+                            <div class="form-group">
+                                <label class="form-label">Parent Epic</label>
+                                <select class="form-input">
+                                    <option>User Management Epic</option>
+                                    <option>Analytics & Reporting Epic</option>
+                                    <option>E-commerce Epic</option>
+                                    <option>Mobile Experience Epic</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Feature Name</label>
+                                <input type="text" class="form-input" placeholder="Enter feature name..." value="Advanced User Profile Management">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Feature Description</label>
+                                <textarea class="form-input" style="min-height: 120px;" placeholder="Describe the feature in detail...">A comprehensive user profile system that allows users to manage their personal information, preferences, security settings, and privacy controls.</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Number of Stories to Generate</label>
+                                <select class="form-input">
+                                    <option>3-5 stories</option>
+                                    <option>5-8 stories</option>
+                                    <option>8-12 stories</option>
+                                    <option>Let AI decide</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-2" style="gap: 12px; margin-top: 16px;">
+                                <button class="btn btn-secondary" style="width: 100%;">Generate Feature & Stories</button>
+                                <button class="btn btn-primary" style="width: 100%;">Generate & Create in Jira</button>
+                            </div>
+                        </div>
+
+                        <!-- New Epic Tab -->
+                        <div id="epic-tab-content" class="tab-content">
+                            <h3 style="margin-bottom: 20px;">Epic Generation</h3>
+                            <div class="form-group">
+                                <label class="form-label">Epic Name</label>
+                                <input type="text" class="form-input" placeholder="Enter epic name..." value="Customer Support Portal">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Business Objective</label>
+                                <textarea class="form-input" style="min-height: 100px;" placeholder="What business problem does this solve?">Create a comprehensive self-service customer support portal that reduces support ticket volume by 50% while improving customer satisfaction.</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Complexity Level</label>
+                                <select class="form-input">
+                                    <option>Simple (3-5 features)</option>
+                                    <option>Moderate (5-8 features)</option>
+                                    <option>Complex (8-15 features)</option>
+                                    <option>Enterprise (15+ features)</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-2" style="gap: 12px; margin-top: 16px;">
+                                <button class="btn btn-secondary" style="width: 100%;">Generate Epic Structure</button>
+                                <button class="btn btn-primary" style="width: 100%;">Generate & Create in Jira</button>
+                            </div>
+                        </div>
+
+                        <!-- Feature Stories Tab -->
+                        <div id="feature-stories-tab-content" class="tab-content">
+                            <h3 style="margin-bottom: 20px;">Generate Stories for Feature</h3>
+                            <div class="form-group">
+                                <label class="form-label">Select Existing Feature</label>
+                                <select class="form-input">
+                                    <option>User Profile Management</option>
+                                    <option>Payment Processing</option>
+                                    <option>Notification System</option>
+                                </select>
+                            </div>
+                            <div class="ai-suggestion">
+                                <div class="ai-suggestion-header">
+                                    <div class="ai-icon">📋</div>
+                                    <strong>Current Feature: User Profile Management</strong>
+                                </div>
+                                <p><strong>Existing Stories:</strong> 3 stories already created</p>
+                                <p><strong>Status:</strong> 2 in development, 1 ready for QA</p>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Story Generation Focus</label>
+                                <select class="form-input">
+                                    <option>Complete remaining functionality</option>
+                                    <option>Edge cases and error handling</option>
+                                    <option>Performance and optimization</option>
+                                    <option>Accessibility improvements</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-2" style="gap: 12px; margin-top: 16px;">
+                                <button class="btn btn-secondary" style="width: 100%;">Generate Additional Stories</button>
+                                <button class="btn btn-primary" style="width: 100%;">Generate & Create in Jira</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar">
+                        <h3 class="sidebar-title">AI Preview</h3>
+                        <div id="story-preview" class="ai-suggestion">
+                            <div class="ai-suggestion-header">
+                                <div class="ai-icon">📝</div>
+                                <strong>Generated Story Preview</strong>
+                            </div>
+                            <div style="margin: 12px 0;">
+                                <strong>Title:</strong> View Login History
+                            </div>
+                            <div style="margin: 12px 0;">
+                                <strong>Story:</strong> As an end user, I want to view my login history so that I can monitor my account security and detect any unauthorized access.
+                            </div>
+                            <div style="margin: 12px 0;">
+                                <strong>Story Points:</strong> 3
+                            </div>
+                            <div style="margin: 12px 0;">
+                                <strong>Priority:</strong> High
+                            </div>
+                        </div>
+
+                        <div id="feature-preview" class="ai-suggestion" style="display: none;">
+                            <div class="ai-suggestion-header">
+                                <div class="ai-icon">🎯</div>
+                                <strong>Generated Feature Structure</strong>
+                            </div>
+                            <div style="margin: 12px 0;">
+                                <strong>Feature:</strong> Advanced User Profile Management
+                            </div>
+                            <div style="margin: 12px 0;">
+                                <strong>Suggested Stories:</strong>
+                                <ul style="margin-left: 20px; font-size: 14px; margin-top: 8px;">
+                                    <li>Basic profile information editing</li>
+                                    <li>Profile picture upload and management</li>
+                                    <li>Privacy settings configuration</li>
+                                </ul>
+                            </div>
+                            <div style="margin: 12px 0;">
+                                <strong>Estimated Effort:</strong> 32 story points
+                            </div>
+                        </div>
+
+                        <div id="epic-preview" class="ai-suggestion" style="display: none;">
+                            <div class="ai-suggestion-header">
+                                <div class="ai-icon">🏗️</div>
+                                <strong>Generated Epic Structure</strong>
+                            </div>
+                            <div style="margin: 12px 0;">
+                                <strong>Epic:</strong> Customer Support Portal
+                            </div>
+                            <div style="margin: 12px 0;">
+                                <strong>Features Identified:</strong>
+                                <ul style="margin-left: 20px; font-size: 14px; margin-top: 8px;">
+                                    <li>Knowledge Base System</li>
+                                    <li>Ticket Management</li>
+                                    <li>Live Chat Integration</li>
+                                </ul>
+                            </div>
+                            <div style="margin: 12px 0;">
+                                <strong>Timeline:</strong> 6 months
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Human Approval Workflow Screen -->
+        <div id="approval" class="screen">
+            <div class="screen-header">
+                <h1 class="screen-title">🔍 Review & Approve Changes</h1>
+                <p class="screen-subtitle">Review AI-generated content and approve changes before updating Jira</p>
+            </div>
+            <div class="screen-content">
+                <div class="grid grid-2">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3>Pending Approvals</h3>
+                            <span class="status-badge" style="background: #fff3e0; color: #f57c00;">3 items pending</span>
+                        </div>
+
+                        <div class="approval-item" style="border: 2px solid #ff9800; border-radius: 12px; padding: 20px; background: #fff8f0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <div>
+                                    <span class="story-id">ACME-124</span>
+                                    <span style="margin-left: 12px; font-weight: 600;">User Login History</span>
+                                </div>
+                                <span class="status-badge" style="background: #e3f2fd; color: #1976d2;">Update</span>
+                            </div>
+                            
+                            <div style="margin: 16px 0;">
+                                <h4 style="color: #d32f2f; margin-bottom: 8px;">🔄 Proposed Changes</h4>
+                                <div style="background: #ffebee; padding: 12px; border-radius: 8px; font-size: 14px;">
+                                    <strong>Added:</strong> 3 new acceptance criteria<br>
+                                    <strong>Enhanced:</strong> Story description with security considerations<br>
+                                    <strong>Updated:</strong> Story points from 2 to 3
+                                </div>
+                            </div>
+
+                            <div style="display: flex; gap: 12px; margin-top: 16px;">
+                                <button class="btn btn-success" style="flex: 1;" onclick="approveChange('ACME-124')">✅ Approve & Update Jira</button>
+                                <button class="btn btn-secondary" style="flex: 1;">✏️ Edit Before Approval</button>
+                                <button class="btn btn-danger" onclick="rejectChange('ACME-124')">❌ Reject Changes</button>
+                            </div>
+                        </div>
+
+                        <div class="approval-item" style="border: 2px solid #4caf50; border-radius: 12px; padding: 20px; background: #f8fff8; margin-top: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <div>
+                                    <span class="story-id">NEW-001</span>
+                                    <span style="margin-left: 12px; font-weight: 600;">Password Reset Functionality</span>
+                                </div>
+                                <span class="status-badge" style="background: #e8f5e8; color: #4caf50;">Create New</span>
+                            </div>
+                            
+                            <div style="margin: 16px 0;">
+                                <h4 style="color: #388e3c; margin-bottom: 8px;">✨ New Story Details</h4>
+                                <div style="background: #e8f5e8; padding: 12px; border-radius: 8px; font-size: 14px;">
+                                    <strong>Epic:</strong> User Authentication<br>
+                                    <strong>Points:</strong> 5 points<br>
+                                    <strong>Priority:</strong> High<br>
+                                    <strong>Components:</strong> Frontend, Backend, Email Service
+                                </div>
+                            </div>
+
+                            <div style="display: flex; gap: 12px; margin-top: 16px;">
+                                <button class="btn btn-success" style="flex: 1;" onclick="approveChange('NEW-001')">✅ Approve & Create in Jira</button>
+                                <button class="btn btn-secondary" style="flex: 1;">✏️ Edit Before Creation</button>
+                                <button class="btn btn-danger" onclick="rejectChange('NEW-001')">❌ Discard</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar">
+                        <h3 class="sidebar-title">Approval Details</h3>
+                        <div style="margin-bottom: 20px;">
+                            <strong>Selected:</strong> ACME-124 - User Login History
+                        </div>
+                        
+                        <div class="ai-suggestion">
+                            <div class="ai-suggestion-header">
+                                <div class="ai-icon">📋</div>
+                                <strong>Change Summary</strong>
+                            </div>
+                            <div style="margin: 12px 0;">
+                                <strong>Original Story Points:</strong> 2<br>
+                                <strong>New Story Points:</strong> 3<br>
+                                <strong>Reason:</strong> Added security validation requirements
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <h4 style="margin-bottom: 12px;">Batch Actions</h4>
+                            <button class="btn btn-success" style="width: 100%; margin-bottom: 8px;" onclick="approveAll()">✅ Approve All Pending</button>
+                            <button class="btn btn-danger" style="width: 100%;" onclick="rejectAll()">❌ Reject All Pending</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attachment Management Screen -->
+        <div id="attachments" class="screen">
+            <div class="screen-header">
+                <h1 class="screen-title">📎 Attachment & Context Management</h1>
+                <p class="screen-subtitle">Upload, analyze, and manage attachments for better AI-powered story generation</p>
+            </div>
+            <div class="screen-content">
+                <div class="grid grid-2">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3>Attachment Library</h3>
+                            <button class="btn btn-primary">📤 Upload New Attachment</button>
+                        </div>
+
+                        <!-- Upload Zone -->
+                        <div style="border: 2px dashed #2196F3; border-radius: 12px; padding: 40px; text-align: center; margin-bottom: 24px; background: #f8f9fa;">
+                            <div style="font-size: 48px; margin-bottom: 16px;">📁</div>
+                            <h4 style="margin-bottom: 8px;">Drop files here or click to upload</h4>
+                            <p style="color: #6c757d; margin-bottom: 16px;">Supported: PDF, DOC, DOCX, PNG, JPG, FIGMA, TXT</p>
+                            <button class="btn btn-secondary">Choose Files</button>
+                        </div>
+
+                        <div class="attachment-item" style="background: white; border: 1px solid #e1e5e9; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <div style="display: flex; align-items: center;">
+                                    <span style="font-size: 24px; margin-right: 12px;">📄</span>
+                                    <div>
+                                        <div style="font-weight: 600;">Security Requirements.pdf</div>
+                                        <div style="font-size: 13px; color: #6c757d;">2.3 MB • Uploaded 2 hours ago</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn btn-secondary" style="font-size: 12px; padding: 4px 8px;">📊 Analyze</button>
+                                    <button class="btn btn-secondary" style="font-size: 12px; padding: 4px 8px;">🔗 Link to Story</button>
+                                </div>
+                            </div>
+                            <div style="margin-top: 12px;">
+                                <div class="ai-suggestion" style="margin: 0;">
+                                    <div class="ai-suggestion-header">
+                                        <div class="ai-icon">🤖</div>
+                                        <strong>AI Analysis</strong>
+                                    </div>
+                                    <p style="font-size: 14px;"><strong>Content Type:</strong> Technical Requirements Document</p>
+                                    <p style="font-size: 14px;"><strong>Key Topics:</strong> Authentication, Data Encryption, Access Control</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar">
+                        <h3 class="sidebar-title">Context Integration</h3>
+                        
+                        <div class="ai-suggestion">
+                            <div class="ai-suggestion-header">
+                                <div class="ai-icon">🧠</div>
+                                <strong>Smart Context Matching</strong>
+                            </div>
+                            <p>AI automatically analyzes uploaded files and suggests relevant stories for context integration.</p>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <h4 style="margin-bottom: 12px;">Upload Statistics</h4>
+                            <div class="metric">
+                                <span class="metric-label">Total Attachments</span>
+                                <span class="metric-value">23</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">AI Analyzed</span>
+                                <span class="metric-value">20</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Linked to Stories</span>
+                                <span class="metric-value">15</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Review Screen -->
+        <div id="review" class="screen">
+            <div class="screen-header">
+                <h1 class="screen-title">✅ Review Generated Content</h1>
+                <p class="screen-subtitle">Review and refine AI-generated stories before adding to Jira</p>
+            </div>
+            <div class="screen-content">
+                <div class="grid grid-2">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3>Generated Stories</h3>
+                            <div>
+                                <button class="btn btn-secondary">Regenerate All</button>
+                                <button class="btn btn-primary">Add Selected to Jira</button>
+                            </div>
+                        </div>
+                        
+                        <div class="story-list">
+                            <div class="story-item" style="border-left: 4px solid #4caf50;">
+                                <div class="story-header">
+                                    <div style="display: flex; align-items: center;">
+                                        <input type="checkbox" checked style="margin-right: 12px;">
+                                        <span class="story-id">NEW-001</span>
+                                    </div>
+                                    <span class="status-badge" style="background: #e8f5e8; color: #4caf50;">Ready</span>
+                                </div>
+                                <div class="story-title">User Profile Information Editing</div>
+                                <div class="story-description">As an end user, I want to edit my basic profile information so that I can keep my account details up to date.</div>
+                                <div style="margin-top: 12px; font-size: 13px;">
+                                    <strong>Points:</strong> 3 | <strong>Epic:</strong> User Management
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar">
+                        <h3 class="sidebar-title">Story Details</h3>
+                        <div style="margin-bottom: 20px;">
+                            <strong>Selected:</strong> NEW-001 - User Profile Information Editing
+                        </div>
+                        
+                        <div class="ai-suggestion">
+                            <div class="ai-suggestion-header">
+                                <div class="ai-icon">✅</div>
+                                <strong>Quality Assessment</strong>
+                            </div>
+                            <p><strong>Quality Score:</strong> 9/10</p>
+                            <p><strong>Ready for Development:</strong> Yes</p>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <button class="btn btn-primary" style="width: 100%; margin-bottom: 8px;">Add to Approval Queue</button>
+                            <button class="btn btn-secondary" style="width: 100%;">Edit Story</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // AI Prompts Tab Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // AI Prompts tabs
+            const promptTabs = document.querySelectorAll('#prompts .tab[data-tab]');
+            const promptTabContents = document.querySelectorAll('.prompt-tab-content');
+            const templateSections = document.querySelectorAll('.template-section');
+
+            promptTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all tabs
+                    promptTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Hide all tab contents
+                    promptTabContents.forEach(content => content.classList.remove('active'));
+                    templateSections.forEach(section => section.classList.remove('active'));
+                    
+                    // Show selected tab content
+                    const targetContent = document.getElementById(tabName + '-prompt-tab');
+                    const targetTemplates = document.getElementById(tabName + '-templates');
+                    
+                    if (targetContent) targetContent.classList.add('active');
+                    if (targetTemplates) targetTemplates.classList.add('active');
+                });
+            });
+
+            // Create New Content tabs
+            const createTabs = document.querySelectorAll('#create .tab[data-create-tab]');
+            const createTabContents = document.querySelectorAll('#create .tab-content');
+            const previews = ['story-preview', 'feature-preview', 'epic-preview', 'story-preview'];
+
+            createTabs.forEach((tab, index) => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-create-tab');
+                    
+                    // Remove active class from all tabs
+                    createTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Hide all tab contents
+                    createTabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Show selected tab content
+                    const targetContent = document.getElementById(tabName + '-tab-content');
+                    if (targetContent) targetContent.classList.add('active');
+                    
+                    // Hide all previews
+                    document.querySelectorAll('[id$="-preview"]').forEach(preview => {
+                        preview.style.display = 'none';
+                    });
+                    
+                    // Show corresponding preview
+                    const previewElement = document.getElementById(previews[index]);
+                    if (previewElement) previewElement.style.display = 'block';
+                });
+            });
+        });
+
+        // Approval Functions
+        function approveChange(storyId) {
+            // Simulate approval process
+            const approvalItem = event.target.closest('.approval-item');
+            approvalItem.style.transform = 'translateX(100%)';
+            approvalItem.style.opacity = '0';
+            
+            setTimeout(() => {
+                approvalItem.remove();
+                showNotification('✅ ' + storyId + ' approved and updated in Jira', 'success');
+                updatePendingCount();
+            }, 300);
+        }
+
+        function rejectChange(storyId) {
+            // Simulate rejection process
+            const approvalItem = event.target.closest('.approval-item');
+            approvalItem.style.transform = 'translateX(-100%)';
+            approvalItem.style.opacity = '0';
+            
+            setTimeout(() => {
+                approvalItem.remove();
+                showNotification('❌ ' + storyId + ' changes rejected', 'error');
+                updatePendingCount();
+            }, 300);
+        }
+
+        function approveAll() {
+            const approvalItems = document.querySelectorAll('.approval-item');
+            approvalItems.forEach((item, index) => {
+                setTimeout(() => {
+                    item.style.transform = 'translateX(100%)';
+                    item.style.opacity = '0';
+                    setTimeout(() => item.remove(), 300);
+                }, index * 100);
+            });
+            
+            setTimeout(() => {
+                showNotification('✅ All pending items approved and updated in Jira', 'success');
+                updatePendingCount();
+            }, approvalItems.length * 100 + 300);
+        }
+
+        function rejectAll() {
+            const approvalItems = document.querySelectorAll('.approval-item');
+            approvalItems.forEach((item, index) => {
+                setTimeout(() => {
+                    item.style.transform = 'translateX(-100%)';
+                    item.style.opacity = '0';
+                    setTimeout(() => item.remove(), 300);
+                }, index * 100);
+            });
+            
+            setTimeout(() => {
+                showNotification('❌ All pending items rejected', 'error');
+                updatePendingCount();
+            }, approvalItems.length * 100 + 300);
+        }
+
+        function updatePendingCount() {
+            const pendingBadge = document.querySelector('.status-badge');
+            const remainingItems = document.querySelectorAll('.approval-item').length;
+            if (pendingBadge) {
+                pendingBadge.textContent = remainingItems + ' items pending';
+                if (remainingItems === 0) {
+                    pendingBadge.textContent = 'No pending items';
+                    pendingBadge.style.background = '#e8f5e8';
+                    pendingBadge.style.color = '#4caf50';
+                }
+            }
+        }
+
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 12px 24px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 10000;
+                transition: all 0.3s ease;
+                ${type === 'success' ? 'background: linear-gradient(135deg, #4caf50, #8bc34a);' : 'background: linear-gradient(135deg, #f44336, #ff5722);'}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(-50%) translateY(-20px)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add interactive feedback to buttons
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Add click animation
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // Add hover effects to cards
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+                this.style.boxShadow = '';
+            });
+        });
+
+        // Simulate AI analysis
+        function simulateAIAnalysis() {
+            const analysisElements = document.querySelectorAll('.ai-suggestion');
+            analysisElements.forEach(element => {
+                element.style.animation = 'pulse 2s infinite';
+            });
+        }
+
+        // Add pulse animation for AI elements
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { opacity: 1; }
+                50% { opacity: 0.7; }
+                100% { opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize tooltips and interactive elements
+        setTimeout(() => {
+            simulateAIAnalysis();
+        }, 1000);
+
+        // Add file upload simulation
+        document.querySelectorAll('input[type="file"], .btn:contains("Choose Files")').forEach(element => {
+            element.addEventListener('click', function() {
+                showNotification('📁 File upload simulation - feature would open file picker', 'success');
+            });
+        });
+
+        // Add form validation simulation
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.borderColor = '#2196F3';
+                this.style.boxShadow = '0 0 0 3px rgba(33, 150, 243, 0.1)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.style.borderColor = '#e1e5e9';
+                this.style.boxShadow = '';
+            });
+        });
+
+        // Simulate Jira connection test
+        document.querySelectorAll('.btn').forEach(btn => {
+            if (btn.textContent.includes('Test Connection')) {
+                btn.addEventListener('click', function() {
+                    this.textContent = 'Testing...';
+                    this.disabled = true;
+                    
+                    setTimeout(() => {
+                        this.textContent = '✅ Connection Successful';
+                        this.style.background = 'linear-gradient(135deg, #4caf50, #8bc34a)';
+                        
+                        setTimeout(() => {
+                            this.textContent = 'Test Connection & Continue';
+                            this.disabled = false;
+                            this.style.background = '';
+                        }, 2000);
+                    }, 1500);
+                });
+            }
+        });
+
+        // Add search functionality simulation
+        document.querySelectorAll('input[placeholder*="JQL"], input[placeholder*="query"]').forEach(input => {
+            input.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    showNotification('🔍 JQL query executed - results refreshed', 'success');
+                }
+            });
+        });
+
+        // Simulate story analysis
+        document.querySelectorAll('.btn').forEach(btn => {
+            if (btn.textContent.includes('Analyze')) {
+                btn.addEventListener('click', function() {
+                    this.textContent = 'Analyzing...';
+                    this.disabled = true;
+                    
+                    setTimeout(() => {
+                        this.textContent = 'Analyze';
+                        this.disabled = false;
+                        showNotification('🔍 AI analysis complete - check sidebar for results', 'success');
+                    }, 2000);
+                });
+            }
+        });
+
+        // Add real-time preview updates
+        document.querySelectorAll('textarea, input[type="text"]').forEach(input => {
+            input.addEventListener('input', function() {
+                // Simulate real-time preview updates
+                const previews = document.querySelectorAll('[id$="-preview"]');
+                previews.forEach(preview => {
+                    if (preview.style.display !== 'none') {
+                        preview.style.opacity = '0.7';
+                        setTimeout(() => {
+                            preview.style.opacity = '1';
+                        }, 300);
+                    }
+                });
+            });
+        });
+
+        console.log('Story Weaver UI fully loaded with interactive functionality');
+    </script>
+</body>
+</html>
